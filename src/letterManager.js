@@ -7,11 +7,21 @@ export class LetterShapeManager {
     this.shapeFactory = shapeFactory
     this.currentLetter = 'C'
     this.deletedBuiltInShapes = this.loadDeletedBuiltInShapes()
-    this.customShapes = this.loadCustomShapes()
+    this.customShapesData = this.loadCustomShapesData()
+    this.loadedCustomShapes = {} // Store actual loaded Three.js objects
     
     // Apply deleted built-in shapes first
     this.applyDeletedBuiltInShapes()
+  }
+
+  async initialize() {
+    // Load all custom shapes asynchronously
+    await this.loadAllCustomShapes()
     
+    // Add them to the factory
+    this.addLoadedShapesToFactory()
+    
+    // Setup UI
     this.init()
   }
 
@@ -20,6 +30,12 @@ export class LetterShapeManager {
     this.modal = document.getElementById('letter-manager-modal')
     this.manageBtn = document.getElementById('manage-letters')
     this.closeBtn = document.getElementById('close-manager')
+    
+    // Only setup UI if elements exist
+    if (!this.modal || !this.manageBtn || !this.closeBtn) {
+      console.warn('Letter manager UI elements not found, skipping UI setup')
+      return
+    }
     
     // Tab controls
     this.letterTabs = document.querySelectorAll('.letter-tab')
@@ -75,7 +91,7 @@ export class LetterShapeManager {
   renderShapeList() {
     const letter = this.currentLetter
     const builtInCount = this.getOriginalBuiltInShapeCount(letter)
-    const customShapes = this.customShapes[letter] || []
+    const customShapes = this.customShapesData[letter] || []
     
     let html = '<h3>Built-in Shapes</h3>'
     
@@ -163,17 +179,36 @@ export class LetterShapeManager {
         customShape.texture = await this.readFileAsDataURL(textureFile)
       }
       
-      // Store in custom shapes
-      if (!this.customShapes[this.currentLetter]) {
-        this.customShapes[this.currentLetter] = []
+      // Store in custom shapes data
+      if (!this.customShapesData[this.currentLetter]) {
+        this.customShapesData[this.currentLetter] = []
       }
-      this.customShapes[this.currentLetter].push(customShape)
-      
-      // Add shape creator to factory
-      this.addCustomShapeToFactory(this.currentLetter, customShape)
+      this.customShapesData[this.currentLetter].push(customShape)
       
       // Save to localStorage
-      this.saveCustomShapes()
+      this.saveCustomShapesData()
+      
+      // Load the shape immediately and add to factory
+      try {
+        const loadedShape = await this.createCustomShape(customShape)
+        if (!this.loadedCustomShapes[this.currentLetter]) {
+          this.loadedCustomShapes[this.currentLetter] = []
+        }
+        this.loadedCustomShapes[this.currentLetter].push({
+          mesh: loadedShape,
+          data: customShape
+        })
+        
+        // Add to factory
+        const shapeCreator = () => loadedShape.clone()
+        this.shapeFactory.shapes[this.currentLetter].push(shapeCreator)
+        
+        console.log('✓ Custom shape loaded and added to factory')
+      } catch (error) {
+        console.error('Failed to load custom shape:', error)
+        alert('Error loading shape: ' + error.message)
+        return
+      }
       
       // Reset form
       this.shapeNameInput.value = ''
@@ -199,12 +234,40 @@ export class LetterShapeManager {
     })
   }
 
-  addCustomShapeToFactory(letter, shapeData) {
-    const shapeCreator = () => {
-      return this.createCustomShape(shapeData)
-    }
+  async loadAllCustomShapes() {
+    console.log('Loading custom shapes...')
     
-    this.shapeFactory.shapes[letter].push(shapeCreator)
+    for (const letter in this.customShapesData) {
+      if (!this.loadedCustomShapes[letter]) {
+        this.loadedCustomShapes[letter] = []
+      }
+      
+      for (const shapeData of this.customShapesData[letter]) {
+        try {
+          console.log(`Loading custom shape: ${shapeData.name}`)
+          const shape = await this.createCustomShape(shapeData)
+          this.loadedCustomShapes[letter].push({
+            mesh: shape,
+            data: shapeData
+          })
+          console.log(`✓ Loaded: ${shapeData.name}`)
+        } catch (error) {
+          console.error(`Failed to load custom shape ${shapeData.name}:`, error)
+        }
+      }
+    }
+  }
+
+  addLoadedShapesToFactory() {
+    for (const letter in this.loadedCustomShapes) {
+      this.loadedCustomShapes[letter].forEach(loadedShape => {
+        // Create a function that returns a clone of the loaded shape
+        const shapeCreator = () => {
+          return loadedShape.mesh.clone()
+        }
+        this.shapeFactory.shapes[letter].push(shapeCreator)
+      })
+    }
   }
 
   async createCustomShape(shapeData) {
@@ -366,14 +429,19 @@ export class LetterShapeManager {
 
   deleteCustomShape(letter, index) {
     if (confirm('Are you sure you want to delete this custom shape?')) {
-      this.customShapes[letter].splice(index, 1)
+      this.customShapesData[letter].splice(index, 1)
+      
+      // Remove from loaded shapes
+      if (this.loadedCustomShapes[letter]) {
+        this.loadedCustomShapes[letter].splice(index, 1)
+      }
       
       // Remove from factory
       const builtInCount = this.getOriginalBuiltInShapeCount(letter)
       const factoryIndex = builtInCount + index
       this.shapeFactory.shapes[letter].splice(factoryIndex, 1)
       
-      this.saveCustomShapes()
+      this.saveCustomShapesData()
       this.renderShapeList()
       
       alert('Shape deleted! Refresh the page to see changes.')
@@ -401,12 +469,22 @@ export class LetterShapeManager {
   getBuiltInShapeCount(letter) {
     // Count only built-in shapes (before custom ones were added)
     const allShapes = this.shapeFactory.shapes[letter]
-    const customCount = (this.customShapes[letter] || []).length
+    const customCount = (this.customShapesData[letter] || []).length
     return allShapes.length - customCount
   }
 
-  saveCustomShapes() {
-    localStorage.setItem('customLetterShapes', JSON.stringify(this.customShapes))
+  saveCustomShapesData() {
+    localStorage.setItem('customLetterShapes', JSON.stringify(this.customShapesData))
+  }
+
+  loadCustomShapesData() {
+    try {
+      const stored = localStorage.getItem('customLetterShapes')
+      return stored ? JSON.parse(stored) : {}
+    } catch (error) {
+      console.error('Error loading custom shapes data:', error)
+      return {}
+    }
   }
 
   loadDeletedBuiltInShapes() {
@@ -430,24 +508,5 @@ export class LetterShapeManager {
         }
       })
     })
-  }
-
-  loadCustomShapes() {
-    try {
-      const stored = localStorage.getItem('customLetterShapes')
-      const shapes = stored ? JSON.parse(stored) : {}
-      
-      // Restore custom shapes to factory
-      Object.keys(shapes).forEach(letter => {
-        shapes[letter].forEach(shapeData => {
-          this.addCustomShapeToFactory(letter, shapeData)
-        })
-      })
-      
-      return shapes
-    } catch (error) {
-      console.error('Error loading custom shapes:', error)
-      return {}
-    }
   }
 }

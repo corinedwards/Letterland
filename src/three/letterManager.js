@@ -2,11 +2,11 @@ import * as THREE from 'three'
 import { ShapeFactory } from './shapeFactory.js'
 
 export class LetterManager {
-  constructor(scene) {
+  constructor(scene, shapeFactory = null) {
     this.scene = scene
     this.letters = []
     this.letterObjects = []
-    this.shapeFactory = new ShapeFactory()
+    this.shapeFactory = shapeFactory || new ShapeFactory()
     this.boundingBoxHelpers = []
   }
 

@@ -2,8 +2,9 @@ import * as THREE from 'three'
 import { LetterManager } from './letterManager.js'
 
 export class ThreeScene {
-  constructor(container) {
+  constructor(container, shapeFactory = null) {
     this.container = container
+    this.shapeFactory = shapeFactory
     this.letterManager = null
     
     this.init()
@@ -68,8 +69,8 @@ export class ThreeScene {
     ground.receiveShadow = true
     this.scene.add(ground)
 
-    // Initialize letter manager
-    this.letterManager = new LetterManager(this.scene)
+    // Initialize letter manager with pre-configured shape factory
+    this.letterManager = new LetterManager(this.scene, this.shapeFactory)
     this.letterManager.createLetters()
     
     // Mouse interaction setup

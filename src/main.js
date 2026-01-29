@@ -1,13 +1,34 @@
 import './style.css'
 import { ThreeScene } from './three/scene.js'
 import { LetterShapeManager } from './letterManager.js'
+import { ShapeFactory } from './three/shapeFactory.js'
 
-// Initialize Three.js scene
-const container = document.getElementById('three-container')
-const scene = new ThreeScene(container)
+// Async initialization
+async function initApp() {
+  // Show loading message
+  const container = document.getElementById('three-container')
+  container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: Courier; font-size: 14pt;">Loading custom shapes...</div>'
+  
+  // Initialize shape factory first
+  const shapeFactory = new ShapeFactory()
 
-// Initialize letter manager (pass shapeFactory from scene)
-const letterManager = new LetterShapeManager(scene.letterManager.shapeFactory)
+  // Initialize letter manager and load custom shapes
+  const letterShapeManager = new LetterShapeManager(shapeFactory)
+  await letterShapeManager.initialize()
+
+  // Clear loading message
+  container.innerHTML = ''
+
+  // Now initialize Three.js scene with the modified factory
+  const scene = new ThreeScene(container, shapeFactory)
+  
+  return { scene, letterShapeManager }
+}
+
+// Start the app
+const app = await initApp()
+const scene = app.scene
+const letterShapeManager = app.letterShapeManager
 
 // Control buttons
 const toggleBoundsBtn = document.getElementById('toggle-bounds')
