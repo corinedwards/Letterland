@@ -1,0 +1,31 @@
+{
+  "_readme": "Optional config for custom shapes. Only include shapes that need custom settings. Files auto-load from this folder using naming: LETTER-shapename.glb or LETTER-shapename.svg. Textures auto-match: LETTER-shapename.png",
+  "_defaults": {
+    "color": "#000",
+    "metalness": 0.5,
+    "roughness": 0.3,
+    "extrudeDepth": 200,
+    "bevelThickness": 4,
+    "bevelSize": 4,
+    "textureFlipY": false,
+    "textureFilter": "nearest",
+    "rotationX": 3.14159,
+    "rotationY": 0,
+    "rotationZ": 0
+  },
+  "C-pac": {
+    "color": "#000",
+    "metalness": 0.5,
+    "roughness": 0.3,
+    "extrudeDepth": 200,
+    "bevelThickness": 4,
+    "bevelSize": 4
+  },
+  "O-diskette": {
+    "color": "#764ba2",
+    "texture": "O-diskette.png"
+  },
+  "O-starsale": {
+    "extrudeDepth": 12,
+  }
+}

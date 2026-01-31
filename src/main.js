@@ -7,12 +7,15 @@ import { ShapeFactory } from './three/shapeFactory.js'
 async function initApp() {
   // Show loading message
   const container = document.getElementById('three-container')
-  container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: Courier; font-size: 14pt;">Loading custom shapes...</div>'
+  container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: Courier; font-size: 14pt;">Loading shapes...</div>'
   
   // Initialize shape factory first
   const shapeFactory = new ShapeFactory()
+  
+  // Load custom shapes from public/letters/ folder
+  await shapeFactory.loadCustomShapes()
 
-  // Initialize letter manager and load custom shapes
+  // Initialize letter manager (for UI only now, not shape loading)
   const letterShapeManager = new LetterShapeManager(shapeFactory)
   await letterShapeManager.initialize()
 

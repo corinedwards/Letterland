@@ -61,36 +61,21 @@
             </div>
             
             <div class="add-shape-section">
-              <h3>Add New Shape</h3>
-              <div class="form-group">
-                <label>Shape Type:</label>
-                <select id="shape-type">
-                  <option value="svg">SVG File (extruded to 3D)</option>
-                  <option value="glb">GLB Model</option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label>Shape Name:</label>
-                <input type="text" id="shape-name" placeholder="e.g., Rounded C, Modern O">
-              </div>
-              
-              <div class="form-group">
-                <label>File:</label>
-                <input type="file" id="shape-file" accept=".svg,.glb,.gltf">
-              </div>
-              
-              <div class="form-group" id="texture-group" style="display: none;">
-                <label>Texture (optional for GLB):</label>
-                <input type="file" id="texture-file" accept="image/*">
-              </div>
-              
-              <div class="form-group">
-                <label>Color:</label>
-                <input type="color" id="shape-color" value="#667eea">
-              </div>
-              
-              <button id="add-shape-btn" class="primary-btn">Add Shape</button>
+              <h3>Add Custom Shapes</h3>
+              <p style="line-height: 1.6; margin-bottom: 15px;">
+                To add custom shapes, place files in <code>public/letters/</code> with this naming convention:
+              </p>
+              <ul style="line-height: 1.8; margin-bottom: 15px;">
+                <li><code>LETTER-shapename.glb</code> - 3D model</li>
+                <li><code>LETTER-shapename.svg</code> - SVG (auto-extruded)</li>
+                <li><code>LETTER-shapename.png</code> - Texture (auto-matched to model)</li>
+              </ul>
+              <p style="font-size: 10pt; color: #666;">
+                Examples: <code>I-diskette.glb</code>, <code>I-diskette.png</code>, <code>C-rounded.svg</code>
+              </p>
+              <p style="margin-top: 15px; font-size: 10pt;">
+                Edit <code>/public/letters/shapes-config.json</code> to customize colors, extrusion, etc.
+              </p>
             </div>
           </div>
         </div>
