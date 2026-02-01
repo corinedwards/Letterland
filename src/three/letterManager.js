@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { ShapeFactory } from './shapeFactory.js'
 
 export class LetterManager {
-  constructor(scene, shapeFactory = null, returnToRest = true, returnToRestSpeed = 0.02) {
+  constructor(scene, shapeFactory = null, returnToRest = true, returnToRestSpeed = 0.02, floating = {}) {
     this.scene = scene
     this.letters = []
     this.letterObjects = []
@@ -10,6 +10,14 @@ export class LetterManager {
     this.boundingBoxHelpers = []
     this.returnToRest = returnToRest
     this.returnToRestSpeed = returnToRestSpeed
+    this.floating = {
+      enabled: floating.enabled !== false,
+      amplitude: floating.amplitude || { x: 0.1, y: 0.15, z: 0.05 },
+      rotation: floating.rotation || { x: 0.05, y: 0.08, z: 0.03 },
+      speed: floating.speed || 1.0,
+      speedVariation: floating.speedVariation || 0.3
+    }
+    this.time = 0
   }
 
   createLetters() {
@@ -43,7 +51,19 @@ export class LetterManager {
         hoverVelocity: 0,  // Individual velocity for hover mode
         initialRotation: { x: 0, y: 0, z: 0 },  // Store initial rotation
         shouldReturnToOrigin: false,  // Flag for auto-return
-        lastDirection: 1  // Track last rotation direction (1 or -1)
+        lastDirection: 1,  // Track last rotation direction (1 or -1)
+        basePosition: { x: 0, y: 0, z: 0 },  // Store base position for floating
+        floatingOffset: {
+          x: Math.random() * Math.PI * 2,  // Random phase offset
+          y: Math.random() * Math.PI * 2,
+          z: Math.random() * Math.PI * 2
+        },
+        floatingRotationOffset: {
+          x: Math.random() * Math.PI * 2,  // Random phase offset for rotation
+          y: Math.random() * Math.PI * 2,
+          z: Math.random() * Math.PI * 2
+        },
+        floatingSpeed: 1 + (Math.random() - 0.5) * this.floating.speedVariation  // Random speed multiplier
       }
       
       // Create 2D bounding rectangle (XY plane only)
@@ -124,20 +144,55 @@ export class LetterManager {
         else if (letter === 'N') { x = -spacing * 0.6; y = -lineHeight }
         
         letterObj.mesh.position.set(x, y, 0)
+        
+        // Store base position for floating effect
+        letterObj.basePosition.x = x
+        letterObj.basePosition.y = y
+        letterObj.basePosition.z = 0
       })
     } else {
       const totalWidth = spacing * (this.letterObjects.length - 1)
       const startX = -totalWidth / 2
       
       this.letterObjects.forEach((letterObj, index) => {
-        letterObj.mesh.position.set(startX + index * spacing, 0, 0)
+        const x = startX + index * spacing
+        letterObj.mesh.position.set(x, 0, 0)
+        
+        // Store base position for floating effect
+        letterObj.basePosition.x = x
+        letterObj.basePosition.y = 0
+        letterObj.basePosition.z = 0
       })
     }
   }
 
   update() {
+    this.time += 0.016 // Approximate frame time
+    
     this.letterObjects.forEach(letterObj => {
       // Auto-rotation removed - now manual only
+      
+      // Apply floating effect
+      if (this.floating.enabled) {
+        const t = this.time * this.floating.speed * letterObj.floatingSpeed
+        
+        letterObj.mesh.position.x = letterObj.basePosition.x + 
+          Math.sin(t + letterObj.floatingOffset.x) * this.floating.amplitude.x
+        letterObj.mesh.position.y = letterObj.basePosition.y + 
+          Math.sin(t + letterObj.floatingOffset.y) * this.floating.amplitude.y
+        letterObj.mesh.position.z = letterObj.basePosition.z + 
+          Math.sin(t + letterObj.floatingOffset.z) * this.floating.amplitude.z
+        
+        // Apply floating rotation
+        if (!letterObj.shouldReturnToOrigin && letterObj.hoverVelocity === 0) {
+          letterObj.mesh.rotation.x = letterObj.initialRotation.x + 
+            Math.sin(t * 0.8 + letterObj.floatingRotationOffset.x) * this.floating.rotation.x
+          letterObj.mesh.rotation.y = letterObj.initialRotation.y + 
+            Math.sin(t * 0.7 + letterObj.floatingRotationOffset.y) * this.floating.rotation.y
+          letterObj.mesh.rotation.z = letterObj.initialRotation.z + 
+            Math.sin(t * 0.9 + letterObj.floatingRotationOffset.z) * this.floating.rotation.z
+        }
+      }
       
       // Apply hover velocity with friction
       if (letterObj.hoverVelocity !== 0) {

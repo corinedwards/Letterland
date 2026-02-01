@@ -8,7 +8,22 @@
     "friction": 0.78,
     "hoverToSpin": true,
     "returnToRest": true,
-    "returnToRestSpeed": 0.01 
+    "returnToRestSpeed": 0.01,
+    "floating": {
+      "enabled": true,
+      "amplitude": {
+        "x": 0.04,
+        "y": 0.06,
+        "z": 0.05
+      },
+      "rotation": {
+        "x": 0.05,
+        "y": 0.08,
+        "z": 0.03
+      },
+      "speed": 1.0,
+      "speedVariation": 0.3
+    }
   },
   "_defaults": {
     "color": "#000",

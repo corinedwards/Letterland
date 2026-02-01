@@ -16,7 +16,14 @@ export class ThreeScene {
       friction: sceneSettings.friction || 0.98,
       hoverToSpin: sceneSettings.hoverToSpin || false,
       returnToRest: sceneSettings.returnToRest !== false,
-      returnToRestSpeed: sceneSettings.returnToRestSpeed || 0.02
+      returnToRestSpeed: sceneSettings.returnToRestSpeed || 0.02,
+      floating: sceneSettings.floating || {
+        enabled: true,
+        amplitude: { x: 0.1, y: 0.15, z: 0.05 },
+        rotation: { x: 0.05, y: 0.08, z: 0.03 },
+        speed: 1.0,
+        speedVariation: 0.3
+      }
     }
     
     this.init()
@@ -57,7 +64,7 @@ export class ThreeScene {
     this.scene.add(directionalLight2)
 
     // Initialize letter manager with pre-configured shape factory
-    this.letterManager = new LetterManager(this.scene, this.shapeFactory, this.settings.returnToRest, this.settings.returnToRestSpeed)
+    this.letterManager = new LetterManager(this.scene, this.shapeFactory, this.settings.returnToRest, this.settings.returnToRestSpeed, this.settings.floating)
     this.letterManager.createLetters()
     
     // Apply spacing settings from config after letters are created
