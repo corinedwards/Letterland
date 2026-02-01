@@ -3,6 +3,8 @@
   "_scene": {
     "spacing": 1.75,
     "lineHeight": 3,
+    "mobileSpacing": 1.4,
+    "mobileLineHeight": 2.2,
     "friction": 0.78,
     "hoverToSpin": true
   },
@@ -41,16 +43,28 @@
   },
   "O-starsale": {
     "extrudeDepth": 12,
-    "color": "#ffff00",
-    "emissive": "#ffff00",
+    "color": "#ff4013",
+    "emissive": "#ff4013",
     "emissiveIntensity": 0.5
   },
   "I-diamondEye": {
     "extrudeDepth": 36
   },
   "C-pacman": {
-     "color": "#fff",
+     "color": "#e7f9f4",
+     "emissive": "#e7f9f4",
+     "emissiveIntensity": 0.5,
      "metalness":  0.1,
      "roughness": 0.8
-  }
+  },
+  "R-bubbled": {
+    "color": "#ff6beb",
+    "emissive": "#ff6bab",
+    "emissiveIntensity": 0.5,
+    "extrudeDepth": 120,
+    "bevelThickness": 24,
+    "bevelSize": 20,
+    "metalness": 0.5,
+    "roughness": 0.1
+    }
 }

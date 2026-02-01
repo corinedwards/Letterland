@@ -116,7 +116,7 @@ export class LetterManager {
         else if (letter === 'O') { x = spacing * 0.6; y = lineHeight }
         else if (letter === 'R') { x = -spacing * 0.6; y = 0 }
         else if (letter === 'I') { x = spacing * 0.6; y = 0 }
-        else if (letter === 'N') { x = 0; y = -lineHeight }
+        else if (letter === 'N') { x = -spacing * 0.6; y = -lineHeight }
         
         letterObj.mesh.position.set(x, y, 0)
       })

@@ -11,6 +11,8 @@ export class ThreeScene {
     this.settings = {
       spacing: sceneSettings.spacing || 3.5,
       lineHeight: sceneSettings.lineHeight || 3,
+      mobileSpacing: sceneSettings.mobileSpacing || 2.5,
+      mobileLineHeight: sceneSettings.mobileLineHeight || 2.5,
       friction: sceneSettings.friction || 0.98,
       hoverToSpin: sceneSettings.hoverToSpin || false
     }
@@ -285,7 +287,11 @@ export class ThreeScene {
 
   updateLetterSpacing(spacing, lineHeight) {
     if (this.letterManager) {
-      this.letterManager.updateSpacing(spacing, lineHeight)
+      const isMobile = window.innerWidth < 768
+      const actualSpacing = isMobile ? this.settings.mobileSpacing : spacing
+      const actualLineHeight = isMobile ? this.settings.mobileLineHeight : lineHeight
+      
+      this.letterManager.updateSpacing(actualSpacing, actualLineHeight)
     }
   }
 
