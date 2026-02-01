@@ -9,6 +9,8 @@ export class ShapeFileLoader {
       color: '#000',
       metalness: 0.5,
       roughness: 0.3,
+      emissive: '#000000',
+      emissiveIntensity: 0.2,
       extrudeDepth: 120,
       bevelThickness: 4,
       bevelSize: 4,
@@ -22,7 +24,8 @@ export class ShapeFileLoader {
 
   async loadConfig() {
     try {
-      const response = await fetch('/letters/shapes-config.json')
+      // Add timestamp to prevent caching
+      const response = await fetch(`/letters/shapes-config.json?t=${Date.now()}`)
       this.config = await response.json()
       if (this.config._defaults) {
         this.defaults = { ...this.defaults, ...this.config._defaults }
@@ -124,12 +127,15 @@ export class ShapeFileLoader {
           } else {
             // Apply color
             const color = new THREE.Color(settings.color || this.defaults.color)
+            const emissive = new THREE.Color(settings.emissive || this.defaults.emissive)
             model.traverse((child) => {
               if (child.isMesh) {
                 child.material = new THREE.MeshStandardMaterial({
                   color: color,
                   metalness: settings.metalness ?? this.defaults.metalness,
-                  roughness: settings.roughness ?? this.defaults.roughness
+                  roughness: settings.roughness ?? this.defaults.roughness,
+                  emissive: emissive,
+                  emissiveIntensity: settings.emissiveIntensity ?? this.defaults.emissiveIntensity
                 })
                 child.castShadow = true
                 child.receiveShadow = true
@@ -183,10 +189,13 @@ export class ShapeFileLoader {
               }
               
               const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
+              const emissive = new THREE.Color(settings.emissive || this.defaults.emissive)
               const material = new THREE.MeshStandardMaterial({
                 color: settings.color || this.defaults.color,
                 metalness: settings.metalness ?? this.defaults.metalness,
-                roughness: settings.roughness ?? this.defaults.roughness
+                roughness: settings.roughness ?? this.defaults.roughness,
+                emissive: emissive,
+                emissiveIntensity: settings.emissiveIntensity ?? this.defaults.emissiveIntensity
               })
               
               const mesh = new THREE.Mesh(geometry, material)

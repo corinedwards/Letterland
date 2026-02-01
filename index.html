@@ -11,75 +11,12 @@
       <div id="three-container"></div>
       <div class="controls">
         <div class="control-group">
-          <label for="spacing-slider">Spacing:</label>
-          <input type="range" id="spacing-slider" min="2" max="6" step="0.1" value="3.5">
-          <input type="number" id="spacing-input" min="0" step="0.1" value="3.5">
-        </div>
-        <div class="control-group">
-          <label for="lineheight-slider">Line Height:</label>
-          <input type="range" id="lineheight-slider" min="2" max="6" step="0.1" value="3">
-          <input type="number" id="lineheight-input" min="0" step="0.1" value="3">
-        </div>
-        <div class="control-group">
-          <label for="friction-slider">Friction:</label>
-          <input type="range" id="friction-slider" min="0.9" max="0.99" step="0.01" value="0.98">
-          <input type="number" id="friction-input" min="0" max="1" step="0.01" value="0.98">
-        </div>
-        <div class="control-group">
           <label for="bg-color">Background:</label>
           <input type="color" id="bg-color" value="#ffffff">
         </div>
-        <div class="control-group">
-          <label>
-            <input type="checkbox" id="hover-mode">
-            Hover to Spin
-          </label>
-        </div>
-        <button id="toggle-bounds">Toggle Bounds</button>
         <button id="refresh">Refresh</button>
-        <button id="manage-letters">Manage Letters</button>
       </div>
-      
-      <!-- Letter Management Modal -->
-      <div id="letter-manager-modal" class="modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2>Manage Letter Shapes</h2>
-            <button id="close-manager" class="close-btn">&times;</button>
-          </div>
-          <div class="modal-body">
-            <div class="letter-tabs">
-              <button class="letter-tab active" data-letter="C">C</button>
-              <button class="letter-tab" data-letter="O">O</button>
-              <button class="letter-tab" data-letter="R">R</button>
-              <button class="letter-tab" data-letter="I">I</button>
-              <button class="letter-tab" data-letter="N">N</button>
-            </div>
-            
-            <div id="shape-list" class="shape-list">
-              <!-- Shapes will be listed here -->
-            </div>
-            
-            <div class="add-shape-section">
-              <h3>Add Custom Shapes</h3>
-              <p style="line-height: 1.6; margin-bottom: 15px;">
-                To add custom shapes, place files in <code>public/letters/</code> with this naming convention:
-              </p>
-              <ul style="line-height: 1.8; margin-bottom: 15px;">
-                <li><code>LETTER-shapename.glb</code> - 3D model</li>
-                <li><code>LETTER-shapename.svg</code> - SVG (auto-extruded)</li>
-                <li><code>LETTER-shapename.png</code> - Texture (auto-matched to model)</li>
-              </ul>
-              <p style="font-size: 10pt; color: #666;">
-                Examples: <code>I-diskette.glb</code>, <code>I-diskette.png</code>, <code>C-rounded.svg</code>
-              </p>
-              <p style="margin-top: 15px; font-size: 10pt;">
-                Edit <code>/public/letters/shapes-config.json</code> to customize colors, extrusion, etc.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+
       <main>
         <section class="content">
           <h1>Corin Edwards</h1>

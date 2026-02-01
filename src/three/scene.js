@@ -2,10 +2,18 @@ import * as THREE from 'three'
 import { LetterManager } from './letterManager.js'
 
 export class ThreeScene {
-  constructor(container, shapeFactory = null) {
+  constructor(container, shapeFactory = null, sceneSettings = {}) {
     this.container = container
     this.shapeFactory = shapeFactory
     this.letterManager = null
+    
+    // Apply settings from config
+    this.settings = {
+      spacing: sceneSettings.spacing || 3.5,
+      lineHeight: sceneSettings.lineHeight || 3,
+      friction: sceneSettings.friction || 0.98,
+      hoverToSpin: sceneSettings.hoverToSpin || false
+    }
     
     this.init()
   }
@@ -73,6 +81,9 @@ export class ThreeScene {
     this.letterManager = new LetterManager(this.scene, this.shapeFactory)
     this.letterManager.createLetters()
     
+    // Apply spacing settings from config after letters are created
+    this.updateLetterSpacing(this.settings.spacing, this.settings.lineHeight)
+    
     // Mouse interaction setup
     this.raycaster = new THREE.Raycaster()
     this.raycaster.params.Points.threshold = 0.5
@@ -83,8 +94,8 @@ export class ThreeScene {
     this.previousMousePosition = { x: 0, y: 0 }
     this.velocity = { x: 0, y: 0 }
     this.lastMoveTime = 0
-    this.friction = 0.98
-    this.hoverMode = false
+    this.friction = this.settings.friction
+    this.hoverMode = this.settings.hoverToSpin
     this.hoveredLetter = null
     this.lastHoveredLetter = null
     this.hoverTimeout = null
