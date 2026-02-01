@@ -9,6 +9,7 @@
     "hoverToSpin": true,
     "returnToRest": true,
     "returnToRestSpeed": 0.01,
+    "cameraZ": 5.5,
     "floating": {
       "enabled": true,
       "amplitude": {
@@ -51,11 +52,8 @@
      "emissive": "#ffff00",
     "emissiveIntensity": 0.5
   },
-  "O-diskette": {
-    "rotationY": 3.14,
-    "texture": "O-diskette.png"
-  },
   "O-diskette-bumps": {
+    "rotationZ": 3.14,
     "rotationY": 3.14,
     "texture": "O-diskette-bumps.png"
   },

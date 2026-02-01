@@ -17,6 +17,7 @@ export class ThreeScene {
       hoverToSpin: sceneSettings.hoverToSpin || false,
       returnToRest: sceneSettings.returnToRest !== false,
       returnToRestSpeed: sceneSettings.returnToRestSpeed || 0.02,
+      cameraZ: sceneSettings.cameraZ || 10,
       floating: sceneSettings.floating || {
         enabled: true,
         amplitude: { x: 0.1, y: 0.15, z: 0.05 },
@@ -41,7 +42,7 @@ export class ThreeScene {
       0.1,
       1000
     )
-    this.camera.position.z = 10
+    this.camera.position.z = this.settings.cameraZ
 
     // Renderer setup
     this.renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -70,6 +71,10 @@ export class ThreeScene {
     // Apply spacing settings from config after letters are created
     this.updateLetterSpacing(this.settings.spacing, this.settings.lineHeight)
     
+    // Window resize handler
+    this.handleResize = this.handleResize.bind(this)
+    window.addEventListener('resize', this.handleResize)
+    
     // Mouse interaction setup
     this.raycaster = new THREE.Raycaster()
     this.raycaster.params.Points.threshold = 0.5
@@ -91,6 +96,18 @@ export class ThreeScene {
     this.darkMode = false
     
     this.setupMouseControls()
+  }
+  
+  handleResize() {
+    // Update camera
+    this.camera.aspect = this.container.clientWidth / this.container.clientHeight
+    this.camera.updateProjectionMatrix()
+    
+    // Update renderer
+    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
+    
+    // Update letter layout for mobile/desktop
+    this.updateLetterSpacing(this.settings.spacing, this.settings.lineHeight)
   }
 
   update() {
@@ -351,6 +368,16 @@ export class ThreeScene {
     // Update all letter materials
     if (this.letterManager) {
       this.letterManager.setDarkMode(enabled)
+    }
+  }
+  
+  dispose() {
+    // Clean up event listener
+    window.removeEventListener('resize', this.handleResize)
+    
+    // Clean up renderer
+    if (this.renderer) {
+      this.renderer.dispose()
     }
   }
 }

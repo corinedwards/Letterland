@@ -151,10 +151,20 @@ export class ShapeFileLoader {
           model.position.sub(center)
           model.scale.set(scale, scale, scale)
           
-          // Apply rotation settings
-          model.rotation.x = settings.rotationX ?? this.defaults.rotationX ?? 0
-          model.rotation.y = settings.rotationY ?? this.defaults.rotationY ?? 0
-          model.rotation.z = settings.rotationZ ?? this.defaults.rotationZ ?? 0
+          // Apply rotation settings to each mesh (to override any baked-in rotations)
+          const rotX = settings.rotationX ?? this.defaults.rotationX ?? 0
+          const rotY = settings.rotationY ?? this.defaults.rotationY ?? 0
+          const rotZ = settings.rotationZ ?? this.defaults.rotationZ ?? 0
+          
+          if (rotX !== 0 || rotY !== 0 || rotZ !== 0) {
+            model.traverse((child) => {
+              if (child.isMesh) {
+                child.rotation.x = rotX
+                child.rotation.y = rotY
+                child.rotation.z = rotZ
+              }
+            })
+          }
           
           resolve(model)
         },
