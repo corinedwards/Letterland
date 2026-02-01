@@ -18,6 +18,7 @@ export class LetterManager {
       speedVariation: floating.speedVariation || 0.3
     }
     this.time = 0
+    this.paused = false
   }
 
   createLetters() {
@@ -43,6 +44,7 @@ export class LetterManager {
         name: letter,
         mesh: shape,
         index: index,
+        shapeName: shape.userData.shapeName, // Store for dark mode restoration
         rotationSpeed: {
           x: (Math.random() - 0.5) * 0.02,
           y: (Math.random() - 0.5) * 0.02,
@@ -67,6 +69,35 @@ export class LetterManager {
         },
         floatingSpeed: 1 + (Math.random() - 0.5) * this.floating.speedVariation  // Random speed multiplier
       }
+      
+      // Store original textures and material properties for dark mode restoration
+      shape.traverse((child) => {
+        if (child.isMesh && child.material) {
+          // Store original material properties
+          child.userData.originalColor = child.material.color.clone()
+          child.userData.originalMetalness = child.material.metalness
+          child.userData.originalRoughness = child.material.roughness
+          child.userData.originalWireframe = child.material.wireframe
+          
+          if (child.material.map) {
+            child.userData.originalMap = child.material.map
+          }
+          if (child.material.emissive) {
+            child.userData.originalEmissive = child.material.emissive.clone()
+          }
+          if (child.material.emissiveMap) {
+            child.userData.originalEmissiveMap = child.material.emissiveMap
+          }
+          if (child.material.emissiveIntensity !== undefined) {
+            child.userData.originalEmissiveIntensity = child.material.emissiveIntensity
+          }
+          // Store original geometry for SVG shapes (to handle bevel removal)
+          if (child.geometry && child.geometry.type === 'ExtrudeGeometry') {
+            child.userData.hasExtrude = true
+            child.userData.originalGeometry = child.geometry
+          }
+        }
+      })
       
       // Create 2D bounding rectangle (XY plane only)
       const bbox = new THREE.Box3().setFromObject(shape)
@@ -169,13 +200,15 @@ export class LetterManager {
   }
 
   update() {
-    this.time += 0.016 // Approximate frame time
+    if (!this.paused) {
+      this.time += 0.016 // Approximate frame time
+    }
     
     this.letterObjects.forEach(letterObj => {
       // Auto-rotation removed - now manual only
       
       // Apply floating effect
-      if (this.floating.enabled) {
+      if (this.floating.enabled && !this.paused) {
         const t = this.time * this.floating.speed * letterObj.floatingSpeed
         
         letterObj.mesh.position.x = letterObj.basePosition.x + 
@@ -185,15 +218,11 @@ export class LetterManager {
         letterObj.mesh.position.z = letterObj.basePosition.z + 
           Math.sin(t + letterObj.floatingOffset.z) * this.floating.amplitude.z
         
-        // Apply floating rotation
-        if (!letterObj.shouldReturnToOrigin && letterObj.hoverVelocity === 0) {
-          letterObj.mesh.rotation.x = letterObj.initialRotation.x + 
-            Math.sin(t * 0.8 + letterObj.floatingRotationOffset.x) * this.floating.rotation.x
-          letterObj.mesh.rotation.y = letterObj.initialRotation.y + 
-            Math.sin(t * 0.7 + letterObj.floatingRotationOffset.y) * this.floating.rotation.y
-          letterObj.mesh.rotation.z = letterObj.initialRotation.z + 
-            Math.sin(t * 0.9 + letterObj.floatingRotationOffset.z) * this.floating.rotation.z
-        }
+        // Apply floating rotation to X and Z only (Y is for manual spinning)
+        letterObj.mesh.rotation.x = letterObj.initialRotation.x + 
+          Math.sin(t * 0.8 + letterObj.floatingRotationOffset.x) * this.floating.rotation.x
+        letterObj.mesh.rotation.z = letterObj.initialRotation.z + 
+          Math.sin(t * 0.9 + letterObj.floatingRotationOffset.z) * this.floating.rotation.z
       }
       
       // Apply hover velocity with friction
@@ -214,7 +243,7 @@ export class LetterManager {
         }
       }
       
-      // Slowly return to initial rotation when velocity is zero, with easing
+      // Slowly return to initial rotation when velocity is zero, with easing (Y axis only)
       if (letterObj.shouldReturnToOrigin && letterObj.hoverVelocity === 0) {
         // Ease in-out function (smooth acceleration and deceleration)
         const easeInOutCubic = (t) => {
@@ -225,14 +254,12 @@ export class LetterManager {
         letterObj.returnProgress += this.returnToRestSpeed
         
         if (letterObj.returnProgress >= 1) {
-          // Completed return
-          letterObj.mesh.rotation.x = letterObj.initialRotation.x
+          // Completed return to initial Y rotation
           letterObj.mesh.rotation.y = letterObj.initialRotation.y
-          letterObj.mesh.rotation.z = letterObj.initialRotation.z
           letterObj.shouldReturnToOrigin = false
           letterObj.returnProgress = 0
         } else {
-          // Apply eased interpolation
+          // Apply eased interpolation on Y axis only
           const eased = easeInOutCubic(letterObj.returnProgress)
           
           // Calculate target with shortest angular distance
@@ -245,7 +272,7 @@ export class LetterManager {
           
           const rotationDiff = getAngularDistance(letterObj.returnStartRotation, letterObj.initialRotation.y)
           
-          // Apply eased rotation
+          // Apply eased rotation to Y only
           letterObj.mesh.rotation.y = letterObj.returnStartRotation + (rotationDiff * eased)
         }
       }
@@ -338,6 +365,93 @@ export class LetterManager {
         undefined,
         (error) => reject(error)
       )
+    })
+  }
+
+  setPaused(paused) {
+    this.paused = paused
+  }
+
+  setDarkMode(enabled) {
+    // Update all letter materials
+    this.letterObjects.forEach(letterObj => {
+      const shapeName = letterObj.shapeName || `${letterObj.name}-default`
+      const settings = this.shapeFactory.fileLoader.getSettings(shapeName)
+      
+      // Traverse all meshes in the letter (handles both single meshes and groups with children)
+      letterObj.mesh.traverse((child) => {
+        if (child.isMesh && child.material) {
+          if (enabled) {
+            // Dark mode: white wireframe with no textures
+            child.material.color.setHex(0xffffff)
+            child.material.wireframe = true
+            child.material.map = null // Remove texture
+            child.material.flatShading = true
+            child.material.metalness = 0 // Ensure consistent appearance
+            child.material.roughness = 1 // Full roughness for uniform look
+            // Add emissive to make it glow white for consistent brightness
+            if (child.material.emissive) {
+              child.material.emissive.setHex(0xffffff)
+              child.material.emissiveIntensity = 0.5
+            }
+            if (child.material.emissiveMap) {
+              child.material.emissiveMap = null
+            }
+            
+            // For extruded SVG shapes, create flat version (no bevels)
+            if (child.userData.hasExtrude && child.geometry.parameters) {
+              const params = child.geometry.parameters
+              if (params.shapes && params.options) {
+                const flatOptions = {
+                  ...params.options,
+                  bevelEnabled: false,
+                  bevelThickness: 0,
+                  bevelSize: 0
+                }
+                const flatGeometry = new THREE.ExtrudeGeometry(params.shapes, flatOptions)
+                child.userData.flatGeometry = flatGeometry
+                child.geometry = flatGeometry
+              }
+            }
+          } else {
+            // Restore original material properties from stored values
+            if (child.userData.originalColor) {
+              child.material.color.copy(child.userData.originalColor)
+            }
+            if (child.userData.originalMetalness !== undefined) {
+              child.material.metalness = child.userData.originalMetalness
+            }
+            if (child.userData.originalRoughness !== undefined) {
+              child.material.roughness = child.userData.originalRoughness
+            }
+            if (child.userData.originalWireframe !== undefined) {
+              child.material.wireframe = child.userData.originalWireframe
+            }
+            child.material.flatShading = false
+            
+            // Restore texture if it was originally there
+            if (child.userData.originalMap) {
+              child.material.map = child.userData.originalMap
+            }
+            if (child.userData.originalEmissiveMap) {
+              child.material.emissiveMap = child.userData.originalEmissiveMap
+            }
+            
+            // Restore original geometry with bevels
+            if (child.userData.originalGeometry) {
+              child.geometry = child.userData.originalGeometry
+            }
+            
+            if (child.userData.originalEmissive) {
+              child.material.emissive.copy(child.userData.originalEmissive)
+            }
+            if (child.userData.originalEmissiveIntensity !== undefined) {
+              child.material.emissiveIntensity = child.userData.originalEmissiveIntensity
+            }
+          }
+          child.material.needsUpdate = true
+        }
+      })
     })
   }
 }

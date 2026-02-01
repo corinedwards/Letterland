@@ -14,6 +14,15 @@ export class ShapeFactory {
       I: [],
       N: []
     }
+    
+    // Store shape names for dark mode restoration
+    this.shapeNames = {
+      C: [],
+      O: [],
+      R: [],
+      I: [],
+      N: []
+    }
   }
 
   async loadCustomShapes() {
@@ -54,6 +63,9 @@ export class ShapeFactory {
           // Add to shape creators
           this.shapes[letter].push(() => mesh.clone())
           
+          // Store shape name for dark mode restoration
+          this.shapeNames[letter].push(shapeData.key)
+          
           console.log(`✓ Loaded ${shapeData.key}`)
         } catch (error) {
           console.error(`Failed to load ${shapeData.key}:`, error)
@@ -67,7 +79,12 @@ export class ShapeFactory {
   getRandomShape(letter) {
     const shapeCreators = this.shapes[letter]
     const randomIndex = Math.floor(Math.random() * shapeCreators.length)
-    return shapeCreators[randomIndex]()
+    const shape = shapeCreators[randomIndex]()
+    
+    // Store shape name for later reference (dark mode restore)
+    shape.userData.shapeName = this.shapeNames[letter][randomIndex]
+    
+    return shape
   }
 
 }

@@ -34,16 +34,51 @@ const scene = app.scene
 const refreshBtn = document.getElementById('refresh')
 const bgColorPicker = document.getElementById('bg-color')
 const bgColorValue = document.getElementById('bg-color-value')
+const pauseMotionCheckbox = document.getElementById('pause-motion')
+const darkModeCheckbox = document.getElementById('dark-mode')
 
-// Restore bg color from localStorage
+// Restore settings from localStorage
 let bgColor = localStorage.getItem('bgColor') || '#ffffff'
+let isPaused = localStorage.getItem('isPaused') === 'true'
+let isDarkMode = localStorage.getItem('isDarkMode') === 'true'
+
 bgColorPicker.value = bgColor
 bgColorValue.textContent = bgColor
+pauseMotionCheckbox.checked = isPaused
+darkModeCheckbox.checked = isDarkMode
+
 scene.setBackgroundColor(bgColor)
 document.body.style.backgroundColor = bgColor
+scene.setPaused(isPaused)
+
+// Apply dark mode if enabled
+if (isDarkMode) {
+  scene.setDarkMode(true)
+  document.body.classList.add('dark-mode')
+}
 
 refreshBtn.addEventListener('click', () => {
   location.reload()
+})
+
+// Pause motion toggle
+pauseMotionCheckbox.addEventListener('change', (e) => {
+  const paused = e.target.checked
+  localStorage.setItem('isPaused', paused)
+  scene.setPaused(paused)
+})
+
+// Dark mode toggle
+darkModeCheckbox.addEventListener('change', (e) => {
+  const darkMode = e.target.checked
+  localStorage.setItem('isDarkMode', darkMode)
+  scene.setDarkMode(darkMode)
+  
+  if (darkMode) {
+    document.body.classList.add('dark-mode')
+  } else {
+    document.body.classList.remove('dark-mode')
+  }
 })
 
 // Background color picker

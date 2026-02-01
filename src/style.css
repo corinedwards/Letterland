@@ -141,6 +141,38 @@ main {
   font-family: 'Courier New', Courier, monospace;
 }
 
+/* Dark mode styles */
+body.dark-mode {
+  background: #000000;
+  color: #ffffff;
+}
+
+body.dark-mode .content h1,
+body.dark-mode .content p {
+  color: #ffffff;
+}
+
+body.dark-mode .control-group {
+  background: #000000;
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+body.dark-mode .control-group label {
+  color: #ffffff;
+}
+
+body.dark-mode button {
+  background: #000000;
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+body.dark-mode button:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
 /* Mobile layout */
 @media (max-width: 768px) {
   #three-container {

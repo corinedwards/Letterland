@@ -87,11 +87,15 @@ export class ThreeScene {
     this.hoverTimeout = null
     this.globalVelocity = 0
     this.affectedLetters = new Set()
+    this.paused = false
+    this.darkMode = false
     
     this.setupMouseControls()
   }
 
   update() {
+    if (this.paused) return
+    
     if (this.letterManager) {
       this.letterManager.update()
     }
@@ -321,5 +325,32 @@ export class ThreeScene {
 
   setBackgroundColor(color) {
     this.scene.background = new THREE.Color(color)
+  }
+
+  setPaused(paused) {
+    this.paused = paused
+    if (this.letterManager) {
+      this.letterManager.setPaused(paused)
+    }
+  }
+
+  setDarkMode(enabled) {
+    this.darkMode = enabled
+    
+    if (enabled) {
+      // Dark mode: black background, white shapes in wireframe
+      this.scene.background = new THREE.Color(0x000000)
+      document.body.style.backgroundColor = '#000000'
+    } else {
+      // Restore normal background
+      const bgColor = localStorage.getItem('bgColor') || '#ffffff'
+      this.scene.background = new THREE.Color(bgColor)
+      document.body.style.backgroundColor = bgColor
+    }
+    
+    // Update all letter materials
+    if (this.letterManager) {
+      this.letterManager.setDarkMode(enabled)
+    }
   }
 }
