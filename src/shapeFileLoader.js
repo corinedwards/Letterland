@@ -9,6 +9,7 @@ export class ShapeFileLoader {
       color: '#000',
       metalness: 0.5,
       roughness: 0.3,
+      wireframe: false,
       emissive: '#000000',
       emissiveIntensity: 0.2,
       extrudeDepth: 120,
@@ -132,6 +133,7 @@ export class ShapeFileLoader {
                   color: color,
                   metalness: settings.metalness ?? this.defaults.metalness,
                   roughness: settings.roughness ?? this.defaults.roughness,
+                  wireframe: settings.wireframe ?? this.defaults.wireframe,
                   emissive: emissive,
                   emissiveIntensity: settings.emissiveIntensity ?? this.defaults.emissiveIntensity
                 })
@@ -190,6 +192,7 @@ export class ShapeFileLoader {
                 color: settings.color || this.defaults.color,
                 metalness: settings.metalness ?? this.defaults.metalness,
                 roughness: settings.roughness ?? this.defaults.roughness,
+                wireframe: settings.wireframe ?? this.defaults.wireframe,
                 emissive: emissive,
                 emissiveIntensity: settings.emissiveIntensity ?? this.defaults.emissiveIntensity
               })

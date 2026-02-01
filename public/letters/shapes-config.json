@@ -12,6 +12,7 @@
     "color": "#000",
     "metalness": 0.5,
     "roughness": 0.3,
+    "wireframe": false,
     "emissive": "#000000",
     "emissiveIntensity": 0.2,
     "extrudeDepth": 200,
@@ -48,7 +49,9 @@
     "emissiveIntensity": 0.5
   },
   "I-diamondEye": {
-    "extrudeDepth": 36
+    "extrudeDepth": 236,
+    "color": "#00ffff",
+    "wireframe": true
   },
   "C-pacman": {
      "color": "#e7f9f4",
@@ -60,9 +63,9 @@
   "R-bubbled": {
     "color": "#ff6beb",
     "emissive": "#ff6bab",
-    "emissiveIntensity": 0.5,
+    "emissiveIntensity": 0.8,
     "extrudeDepth": 120,
-    "bevelThickness": 24,
+    "bevelThickness": 14,
     "bevelSize": 20,
     "metalness": 0.5,
     "roughness": 0.1
