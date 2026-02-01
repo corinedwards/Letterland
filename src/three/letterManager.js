@@ -51,6 +51,8 @@ export class LetterManager {
         hoverVelocity: 0,  // Individual velocity for hover mode
         initialRotation: { x: 0, y: 0, z: 0 },  // Store initial rotation
         shouldReturnToOrigin: false,  // Flag for auto-return
+        returnProgress: 0,  // Track progress for easing (0 to 1)
+        returnStartRotation: 0,  // Store rotation when return begins
         lastDirection: 1,  // Track last rotation direction (1 or -1)
         basePosition: { x: 0, y: 0, z: 0 },  // Store base position for floating
         floatingOffset: {
@@ -206,34 +208,45 @@ export class LetterManager {
           letterObj.hoverVelocity = 0
           if (this.returnToRest) {
             letterObj.shouldReturnToOrigin = true // Start returning to origin
+            letterObj.returnProgress = 0 // Reset progress
+            letterObj.returnStartRotation = letterObj.mesh.rotation.y // Store current rotation
           }
         }
       }
       
-      // Slowly return to initial rotation when velocity is zero, maintaining rotation direction
+      // Slowly return to initial rotation when velocity is zero, with easing
       if (letterObj.shouldReturnToOrigin && letterObj.hoverVelocity === 0) {
-        const returnSpeed = this.returnToRestSpeed // Speed of return rotation
-        const snapThreshold = 0.08 // Snap to target when this close
-        
-        // Calculate the shortest angular distance to target (considering wrap-around)
-        const getAngularDistance = (current, target) => {
-          let diff = target - current
-          while (diff > Math.PI) diff -= Math.PI * 2
-          while (diff < -Math.PI) diff += Math.PI * 2
-          return diff
+        // Ease in-out function (smooth acceleration and deceleration)
+        const easeInOutCubic = (t) => {
+          return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
         }
         
-        const distanceToTarget = getAngularDistance(letterObj.mesh.rotation.y, letterObj.initialRotation.y)
+        // Increment progress
+        letterObj.returnProgress += this.returnToRestSpeed
         
-        // If we're very close, snap to target
-        if (Math.abs(distanceToTarget) < snapThreshold) {
+        if (letterObj.returnProgress >= 1) {
+          // Completed return
           letterObj.mesh.rotation.x = letterObj.initialRotation.x
           letterObj.mesh.rotation.y = letterObj.initialRotation.y
           letterObj.mesh.rotation.z = letterObj.initialRotation.z
           letterObj.shouldReturnToOrigin = false
+          letterObj.returnProgress = 0
         } else {
-          // Continue rotating in the same direction
-          letterObj.mesh.rotation.y += returnSpeed * letterObj.lastDirection
+          // Apply eased interpolation
+          const eased = easeInOutCubic(letterObj.returnProgress)
+          
+          // Calculate target with shortest angular distance
+          const getAngularDistance = (current, target) => {
+            let diff = target - current
+            while (diff > Math.PI) diff -= Math.PI * 2
+            while (diff < -Math.PI) diff += Math.PI * 2
+            return diff
+          }
+          
+          const rotationDiff = getAngularDistance(letterObj.returnStartRotation, letterObj.initialRotation.y)
+          
+          // Apply eased rotation
+          letterObj.mesh.rotation.y = letterObj.returnStartRotation + (rotationDiff * eased)
         }
       }
       
