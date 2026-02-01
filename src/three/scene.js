@@ -14,7 +14,9 @@ export class ThreeScene {
       mobileSpacing: sceneSettings.mobileSpacing || 2.5,
       mobileLineHeight: sceneSettings.mobileLineHeight || 2.5,
       friction: sceneSettings.friction || 0.98,
-      hoverToSpin: sceneSettings.hoverToSpin || false
+      hoverToSpin: sceneSettings.hoverToSpin || false,
+      returnToRest: sceneSettings.returnToRest !== false,
+      returnToRestSpeed: sceneSettings.returnToRestSpeed || 0.02
     }
     
     this.init()
@@ -55,7 +57,7 @@ export class ThreeScene {
     this.scene.add(directionalLight2)
 
     // Initialize letter manager with pre-configured shape factory
-    this.letterManager = new LetterManager(this.scene, this.shapeFactory)
+    this.letterManager = new LetterManager(this.scene, this.shapeFactory, this.settings.returnToRest, this.settings.returnToRestSpeed)
     this.letterManager.createLetters()
     
     // Apply spacing settings from config after letters are created
@@ -97,6 +99,9 @@ export class ThreeScene {
       // Stop if velocity is very small
       if (Math.abs(this.velocity.x) < 0.0005) {
         this.velocity.x = 0
+        if (this.settings.returnToRest) {
+          this.selectedLetter.shouldReturnToOrigin = true // Start returning to origin
+        }
         this.selectedLetter = null
       }
     }

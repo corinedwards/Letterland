@@ -2,12 +2,14 @@ import * as THREE from 'three'
 import { ShapeFactory } from './shapeFactory.js'
 
 export class LetterManager {
-  constructor(scene, shapeFactory = null) {
+  constructor(scene, shapeFactory = null, returnToRest = true, returnToRestSpeed = 0.02) {
     this.scene = scene
     this.letters = []
     this.letterObjects = []
     this.shapeFactory = shapeFactory || new ShapeFactory()
     this.boundingBoxHelpers = []
+    this.returnToRest = returnToRest
+    this.returnToRestSpeed = returnToRestSpeed
   }
 
   createLetters() {
@@ -38,7 +40,10 @@ export class LetterManager {
           y: (Math.random() - 0.5) * 0.02,
           z: (Math.random() - 0.5) * 0.02
         },
-        hoverVelocity: 0  // Individual velocity for hover mode
+        hoverVelocity: 0,  // Individual velocity for hover mode
+        initialRotation: { x: 0, y: 0, z: 0 },  // Store initial rotation
+        shouldReturnToOrigin: false,  // Flag for auto-return
+        lastDirection: 1  // Track last rotation direction (1 or -1)
       }
       
       // Create 2D bounding rectangle (XY plane only)
@@ -139,8 +144,41 @@ export class LetterManager {
         letterObj.mesh.rotation.y += letterObj.hoverVelocity
         letterObj.hoverVelocity *= 0.95 // Individual friction
         
+        // Track direction of rotation
+        letterObj.lastDirection = Math.sign(letterObj.hoverVelocity)
+        
         if (Math.abs(letterObj.hoverVelocity) < 0.0005) {
           letterObj.hoverVelocity = 0
+          if (this.returnToRest) {
+            letterObj.shouldReturnToOrigin = true // Start returning to origin
+          }
+        }
+      }
+      
+      // Slowly return to initial rotation when velocity is zero, maintaining rotation direction
+      if (letterObj.shouldReturnToOrigin && letterObj.hoverVelocity === 0) {
+        const returnSpeed = this.returnToRestSpeed // Speed of return rotation
+        const snapThreshold = 0.08 // Snap to target when this close
+        
+        // Calculate the shortest angular distance to target (considering wrap-around)
+        const getAngularDistance = (current, target) => {
+          let diff = target - current
+          while (diff > Math.PI) diff -= Math.PI * 2
+          while (diff < -Math.PI) diff += Math.PI * 2
+          return diff
+        }
+        
+        const distanceToTarget = getAngularDistance(letterObj.mesh.rotation.y, letterObj.initialRotation.y)
+        
+        // If we're very close, snap to target
+        if (Math.abs(distanceToTarget) < snapThreshold) {
+          letterObj.mesh.rotation.x = letterObj.initialRotation.x
+          letterObj.mesh.rotation.y = letterObj.initialRotation.y
+          letterObj.mesh.rotation.z = letterObj.initialRotation.z
+          letterObj.shouldReturnToOrigin = false
+        } else {
+          // Continue rotating in the same direction
+          letterObj.mesh.rotation.y += returnSpeed * letterObj.lastDirection
         }
       }
       

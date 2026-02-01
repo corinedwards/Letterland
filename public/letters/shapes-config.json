@@ -6,7 +6,9 @@
     "mobileSpacing": 1.4,
     "mobileLineHeight": 2.2,
     "friction": 0.78,
-    "hoverToSpin": true
+    "hoverToSpin": true,
+    "returnToRest": true,
+    "returnToRestSpeed": 0.01 
   },
   "_defaults": {
     "color": "#000",
@@ -49,9 +51,7 @@
     "emissiveIntensity": 0.5
   },
   "I-diamondEye": {
-    "extrudeDepth": 236,
-    "color": "#00ffff",
-    "wireframe": true
+    "extrudeDepth": 96
   },
   "C-pacman": {
      "color": "#e7f9f4",
@@ -69,5 +69,11 @@
     "bevelSize": 20,
     "metalness": 0.5,
     "roughness": 0.1
+  },
+  "N-chunker":{
+    "color": "#00fdff",
+    "emissive": "#00f900",
+    "emissiveIntensity": 0.4,
+    "wireframe": true
     }
 }
