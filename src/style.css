@@ -11,6 +11,10 @@ body {
   overflow-x: hidden;
 }
 
+body p{
+  mix-blend-mode: difference;
+}
+
 #app {
   width: 100%;
   min-height: 100vh;

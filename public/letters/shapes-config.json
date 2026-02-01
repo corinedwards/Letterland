@@ -40,7 +40,10 @@
     "texture": "O-diskette-bumps.png"
   },
   "O-starsale": {
-    "extrudeDepth": 12
+    "extrudeDepth": 12,
+    "color": "#ffff00",
+    "emissive": "#ffff00",
+    "emissiveIntensity": 0.5
   },
   "I-diamondEye": {
     "extrudeDepth": 36

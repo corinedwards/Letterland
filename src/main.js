@@ -33,10 +33,12 @@ const scene = app.scene
 // Control buttons
 const refreshBtn = document.getElementById('refresh')
 const bgColorPicker = document.getElementById('bg-color')
+const bgColorValue = document.getElementById('bg-color-value')
 
 // Restore bg color from localStorage
 let bgColor = localStorage.getItem('bgColor') || '#ffffff'
 bgColorPicker.value = bgColor
+bgColorValue.textContent = bgColor
 scene.setBackgroundColor(bgColor)
 document.body.style.backgroundColor = bgColor
 
@@ -47,6 +49,7 @@ refreshBtn.addEventListener('click', () => {
 // Background color picker
 bgColorPicker.addEventListener('input', (e) => {
   const color = e.target.value
+  bgColorValue.textContent = color
   localStorage.setItem('bgColor', color)
   scene.setBackgroundColor(color)
   document.body.style.backgroundColor = color

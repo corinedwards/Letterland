@@ -36,46 +36,21 @@ export class ThreeScene {
     this.renderer = new THREE.WebGLRenderer({ antialias: true })
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    this.renderer.shadowMap.enabled = true
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
     this.container.appendChild(this.renderer.domElement)
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
     this.scene.add(ambientLight)
 
-    // Main directional light from camera position (like sun from viewer's eyes)
+    // Main directional light from camera position
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8)
-    directionalLight.position.set(0, 0, 10) // Same Z as camera
-    directionalLight.castShadow = true
-    
-    // Configure shadow properties for soft shadows
-    directionalLight.shadow.mapSize.width = 2048
-    directionalLight.shadow.mapSize.height = 2048
-    directionalLight.shadow.camera.near = 0.5
-    directionalLight.shadow.camera.far = 50
-    directionalLight.shadow.camera.left = -20
-    directionalLight.shadow.camera.right = 20
-    directionalLight.shadow.camera.top = 20
-    directionalLight.shadow.camera.bottom = -20
-    directionalLight.shadow.radius = 4 // Softer shadows
-    directionalLight.shadow.bias = -0.0001
-    
+    directionalLight.position.set(0, 0, 10)
     this.scene.add(directionalLight)
 
     // Subtle colored rim light
     const directionalLight2 = new THREE.DirectionalLight(0x667eea, 0.3)
     directionalLight2.position.set(-5, -5, 5)
     this.scene.add(directionalLight2)
-    
-    // Add invisible ground plane to receive shadows
-    const groundGeometry = new THREE.PlaneGeometry(100, 100)
-    const groundMaterial = new THREE.ShadowMaterial({ opacity: 0.15 })
-    const ground = new THREE.Mesh(groundGeometry, groundMaterial)
-    ground.rotation.x = -Math.PI / 2
-    ground.position.y = -3
-    ground.receiveShadow = true
-    this.scene.add(ground)
 
     // Initialize letter manager with pre-configured shape factory
     this.letterManager = new LetterManager(this.scene, this.shapeFactory)

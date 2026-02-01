@@ -117,8 +117,6 @@ export class ShapeFileLoader {
                 if (child.isMesh) {
                   child.material.map = texture
                   child.material.needsUpdate = true
-                  child.castShadow = true
-                  child.receiveShadow = true
                 }
               })
             } catch (error) {
@@ -137,8 +135,6 @@ export class ShapeFileLoader {
                   emissive: emissive,
                   emissiveIntensity: settings.emissiveIntensity ?? this.defaults.emissiveIntensity
                 })
-                child.castShadow = true
-                child.receiveShadow = true
               }
             })
           }
@@ -199,8 +195,6 @@ export class ShapeFileLoader {
               })
               
               const mesh = new THREE.Mesh(geometry, material)
-              mesh.castShadow = true
-              mesh.receiveShadow = true
               group.add(mesh)
             })
           })
