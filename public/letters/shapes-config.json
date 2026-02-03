@@ -24,6 +24,24 @@
       },
       "speed": 1.0,
       "speedVariation": 0.3
+    },
+    "darkModeEffects": {
+      "rgbShift": {
+        "enabled": true,
+        "maxShiftPixels": 3.0,
+        "animationSpeed": 0.016,
+        "blurIntensity": 0.2
+      },
+      "distortion": {
+        "enabled": true,
+        "triggerInterval": 4000,
+        "duration": 400,
+        "updateFPS": 12,
+        "smearWidth": 0.30,
+        "smearHeight": 0.30,
+        "segments": 4.8,
+        "intensityMultiplier": 4.0
+      }
     }
   },
   "_defaults": {
@@ -42,14 +60,14 @@
     "rotationY": 0,
     "rotationZ": 0
   },
-  "C-pac": {
-    "color": "#ffff00",
+  "C-raver": {
+    "color": "#ff6600",
     "metalness": 0,
     "roughness": 0.3,
-    "extrudeDepth": 100,
-    "bevelThickness": 8,
-    "bevelSize": 8,
-     "emissive": "#ffff00",
+    "extrudeDepth": 64,
+    "bevelThickness": 0,
+    "bevelSize": 0,
+     "emissive": "#FFFF00",
     "emissiveIntensity": 0.5
   },
   "O-diskette-bumps": {
@@ -63,17 +81,23 @@
     "emissive": "#ff4013",
     "emissiveIntensity": 0.5
   },
+  "O-corg": {
+    "extrudeDepth": 32,
+    "color": "#00c7fc",
+    "emissive": "#00c7fc",
+    "emissiveIntensity": 0.5
+  },
   "I-diamondEye": {
-    "color": "#FEE540",
+    "color": "#FED600",
     "emissive": "#FEEA00",
-    "emissiveIntensity": 0.1,
-    "metalness": 0.4,
+    "emissiveIntensity": 0.6,
+    "metalness": 0.6,
     "roughness": 0.1,
     "extrudeDepth": 96
   },
   "C-pacman": {
-     "color": "#e7f9f4",
-     "emissive": "#e7f9f4",
+     "color": "#ff6251",
+     "emissive": "#ff6251",
      "emissiveIntensity": 0.5,
      "metalness":  0.1,
      "roughness": 0.8
@@ -93,5 +117,30 @@
     "emissive": "#00f900",
     "emissiveIntensity": 0.4,
     "wireframe": true
+    },
+  "I-raver":{
+    "color": "#5e30eb",
+    "emissive": "#5e30eb",
+    "emissiveIntensity": 0.4,
+    "wireframe": false,
+    "extrudeDepth": 90,
+    "bevelThickness": 30,
+    "bevelSize": 20
+    },
+   "N-zone":{
+    "color": "#862AFE",
+    "emissive": "#2AFE59",
+    "emissiveIntensity": 0.8,
+    "extrudeDepth": 56
+    },
+   "O-counterSpiral":{
+    "color": "#000",
+    "emissive": "#ff6251",
+    "emissiveIntensity": 0.6,
+    "metalness":  0,
+    "roughness": 0.2,
+    "extrudeDepth": 48,
+    "bevelThickness": 36,
+    "bevelSize": 18
     }
 }

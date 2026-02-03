@@ -4,6 +4,20 @@ import { ShapeFactory } from './three/shapeFactory.js'
 
 // Async initialization
 async function initApp() {
+  // Restore settings from localStorage FIRST (before anything renders)
+  const bgColor = localStorage.getItem('bgColor') || '#ffffff'
+  const isDarkMode = localStorage.getItem('isDarkMode') === 'true'
+  
+  // Apply background and dark mode immediately (before fade-in)
+  document.body.style.backgroundColor = bgColor
+  const overlay = document.getElementById('loading-overlay')
+  if (overlay) {
+    overlay.style.backgroundColor = bgColor
+  }
+  if (isDarkMode) {
+    document.body.classList.add('dark-mode')
+  }
+  
   // Show loading message
   const container = document.getElementById('three-container')
   container.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: Courier; font-size: 14pt;">Loading shapes...</div>'
@@ -23,6 +37,19 @@ async function initApp() {
   // Now initialize Three.js scene with settings from config
   const scene = new ThreeScene(container, shapeFactory, sceneSettings)
   
+  // Wait for first render frame before hiding loading overlay
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const overlay = document.getElementById('loading-overlay')
+      if (overlay) {
+        overlay.classList.add('hidden')
+        // Remove from DOM after transition
+        setTimeout(() => overlay.remove(), 400)
+      }
+      document.body.classList.add('loaded')
+    })
+  })
+  
   return { scene }
 }
 
@@ -37,10 +64,10 @@ const bgColorValue = document.getElementById('bg-color-value')
 const pauseMotionCheckbox = document.getElementById('pause-motion')
 const darkModeCheckbox = document.getElementById('dark-mode')
 
-// Restore settings from localStorage
-let bgColor = localStorage.getItem('bgColor') || '#ffffff'
-let isPaused = localStorage.getItem('isPaused') === 'true'
-let isDarkMode = localStorage.getItem('isDarkMode') === 'true'
+// Get settings from localStorage (already applied in initApp)
+const bgColor = localStorage.getItem('bgColor') || '#ffffff'
+const isPaused = localStorage.getItem('isPaused') === 'true'
+const isDarkMode = localStorage.getItem('isDarkMode') === 'true'
 
 bgColorPicker.value = bgColor
 bgColorValue.textContent = bgColor
@@ -48,17 +75,11 @@ pauseMotionCheckbox.checked = isPaused
 darkModeCheckbox.checked = isDarkMode
 
 scene.setBackgroundColor(bgColor)
-document.body.style.backgroundColor = bgColor
 scene.setPaused(isPaused)
-
-// Apply dark mode if enabled
-if (isDarkMode) {
-  scene.setDarkMode(true)
-  document.body.classList.add('dark-mode')
-}
+scene.setDarkMode(isDarkMode)
 
 refreshBtn.addEventListener('click', () => {
-  location.reload()
+  scene.regenerateLetters()
 })
 
 // Pause motion toggle

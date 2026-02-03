@@ -117,6 +117,7 @@ export class ShapeFileLoader {
               model.traverse((child) => {
                 if (child.isMesh) {
                   child.material.map = texture
+                  child.material.color.setHex(0xffffff) // WHITE so texture shows correctly
                   child.material.needsUpdate = true
                 }
               })

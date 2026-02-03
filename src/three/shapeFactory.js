@@ -60,8 +60,27 @@ export class ShapeFactory {
             mesh: mesh
           })
           
-          // Add to shape creators
-          this.shapes[letter].push(() => mesh.clone())
+          // Add to shape creators - clone with deep material cloning
+          this.shapes[letter].push(() => {
+            const clonedMesh = mesh.clone()
+            // Deep clone materials so each letter has its own material instance
+            clonedMesh.traverse((child) => {
+              if (child.isMesh && child.material) {
+                const originalMaterial = child.material
+                child.material = child.material.clone()
+                // Preserve texture references when cloning
+                if (originalMaterial.map) {
+                  child.material.map = originalMaterial.map
+                  child.material.needsUpdate = true
+                }
+                if (originalMaterial.emissiveMap) {
+                  child.material.emissiveMap = originalMaterial.emissiveMap
+                  child.material.needsUpdate = true
+                }
+              }
+            })
+            return clonedMesh
+          })
           
           // Store shape name for dark mode restoration
           this.shapeNames[letter].push(shapeData.key)

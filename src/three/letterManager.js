@@ -130,6 +130,36 @@ export class LetterManager {
     this.updateLayout()
   }
 
+  // Regenerate letters with new random shapes
+  regenerateLetters() {
+    // Remove old letters from scene
+    this.letterObjects.forEach(letterObj => {
+      this.scene.remove(letterObj.mesh)
+      this.scene.remove(letterObj.rectangle)
+      this.scene.remove(letterObj.axisHelper)
+      // Dispose of geometries and materials
+      letterObj.mesh.traverse((child) => {
+        if (child.isMesh) {
+          if (child.geometry) child.geometry.dispose()
+          if (child.material) {
+            if (Array.isArray(child.material)) {
+              child.material.forEach(mat => mat.dispose())
+            } else {
+              child.material.dispose()
+            }
+          }
+        }
+      })
+    })
+    
+    // Clear arrays
+    this.letterObjects = []
+    this.boundingBoxHelpers = []
+    
+    // Create new letters with new random shapes
+    this.createLetters()
+  }
+
   updateLayout() {
     const isMobile = window.innerWidth < 768
     
@@ -385,11 +415,11 @@ export class LetterManager {
             // Dark mode: white wireframe with no textures
             child.material.color.setHex(0xffffff)
             child.material.wireframe = true
-            child.material.map = null // Remove texture
+            child.material.map = null
             child.material.flatShading = true
-            child.material.metalness = 0 // Ensure consistent appearance
-            child.material.roughness = 1 // Full roughness for uniform look
-            // Add emissive to make it glow white for consistent brightness
+            child.material.metalness = 0
+            child.material.roughness = 1
+            
             if (child.material.emissive) {
               child.material.emissive.setHex(0xffffff)
               child.material.emissiveIntensity = 0.5
@@ -398,7 +428,7 @@ export class LetterManager {
               child.material.emissiveMap = null
             }
             
-            // For extruded SVG shapes, create flat version (no bevels)
+            // For extruded SVG shapes, create flat version
             if (child.userData.hasExtrude && child.geometry.parameters) {
               const params = child.geometry.parameters
               if (params.shapes && params.options) {
@@ -414,22 +444,36 @@ export class LetterManager {
               }
             }
           } else {
-            // Restore original material properties from stored values
-            if (child.userData.originalColor) {
-              child.material.color.copy(child.userData.originalColor)
+            // RESTORE FROM JSON SETTINGS (source of truth)
+            // Get defaults first
+            const defaults = this.shapeFactory.fileLoader.config._defaults || {}
+            
+            // Apply color - if there's a texture, use white so texture shows properly
+            let color
+            if (child.userData.originalMap || (settings && settings.texture)) {
+              color = '#ffffff' // Always white for textured materials
+            } else {
+              color = (settings && settings.color) || defaults.color || '#808080'
             }
-            if (child.userData.originalMetalness !== undefined) {
-              child.material.metalness = child.userData.originalMetalness
-            }
-            if (child.userData.originalRoughness !== undefined) {
-              child.material.roughness = child.userData.originalRoughness
-            }
-            if (child.userData.originalWireframe !== undefined) {
-              child.material.wireframe = child.userData.originalWireframe
-            }
+            child.material.color.setHex(parseInt(color.replace('#', '0x'), 16))
+            
+            // Apply metalness
+            const metalness = (settings && settings.metalness !== undefined) ? settings.metalness : 
+                             (defaults.metalness !== undefined ? defaults.metalness : 0.5)
+            child.material.metalness = metalness
+            
+            // Apply roughness
+            const roughness = (settings && settings.roughness !== undefined) ? settings.roughness :
+                             (defaults.roughness !== undefined ? defaults.roughness : 0.5)
+            child.material.roughness = roughness
+            
+            // Apply wireframe
+            const wireframe = (settings && settings.wireframe !== undefined) ? settings.wireframe : false
+            child.material.wireframe = wireframe
+            
             child.material.flatShading = false
             
-            // Restore texture if it was originally there
+            // Restore textures from userData FIRST (these were loaded at creation time)
             if (child.userData.originalMap) {
               child.material.map = child.userData.originalMap
             }
@@ -442,12 +486,25 @@ export class LetterManager {
               child.geometry = child.userData.originalGeometry
             }
             
-            if (child.userData.originalEmissive) {
-              child.material.emissive.copy(child.userData.originalEmissive)
+            // Restore emissive properties (userData takes priority over settings)
+            if (child.material.emissive) {
+              if (child.userData.originalEmissive) {
+                child.material.emissive.copy(child.userData.originalEmissive)
+              } else {
+                const emissive = (settings && settings.emissive) || defaults.emissive || '#000000'
+                child.material.emissive.setHex(parseInt(emissive.replace('#', '0x'), 16))
+              }
+              
+              if (child.userData.originalEmissiveIntensity !== undefined) {
+                child.material.emissiveIntensity = child.userData.originalEmissiveIntensity
+              } else {
+                const emissiveIntensity = (settings && settings.emissiveIntensity !== undefined) ? settings.emissiveIntensity :
+                                         (defaults.emissiveIntensity !== undefined ? defaults.emissiveIntensity : 0)
+                child.material.emissiveIntensity = emissiveIntensity
+              }
             }
-            if (child.userData.originalEmissiveIntensity !== undefined) {
-              child.material.emissiveIntensity = child.userData.originalEmissiveIntensity
-            }
+            
+            child.material.needsUpdate = true
           }
           child.material.needsUpdate = true
         }

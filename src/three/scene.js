@@ -1,5 +1,8 @@
 import * as THREE from 'three'
 import { LetterManager } from './letterManager.js'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 
 export class ThreeScene {
   constructor(container, shapeFactory = null, sceneSettings = {}) {
@@ -24,6 +27,24 @@ export class ThreeScene {
         rotation: { x: 0.05, y: 0.08, z: 0.03 },
         speed: 1.0,
         speedVariation: 0.3
+      },
+      darkModeEffects: sceneSettings.darkModeEffects || {
+        rgbShift: {
+          enabled: true,
+          maxShiftPixels: 3.0,
+          animationSpeed: 0.016,
+          blurIntensity: 0.2
+        },
+        distortion: {
+          enabled: true,
+          triggerInterval: 4000,
+          duration: 400,
+          updateFPS: 12,
+          smearWidth: 0.30,
+          smearHeight: 0.30,
+          segments: 4.0,
+          intensityMultiplier: 4.0
+        }
       }
     }
     
@@ -49,6 +70,199 @@ export class ThreeScene {
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     this.container.appendChild(this.renderer.domElement)
+    
+    // Post-processing setup
+    this.composer = new EffectComposer(this.renderer)
+    this.renderPass = new RenderPass(this.scene, this.camera)
+    this.composer.addPass(this.renderPass)
+    
+    // Custom RGB Shift with blur effect
+    const rgbConfig = this.settings.darkModeEffects.rgbShift
+    const BlurredRGBShiftShader = {
+      uniforms: {
+        'tDiffuse': { value: null },
+        'shiftPixels': { value: rgbConfig.maxShiftPixels },
+        'resolution': { value: new THREE.Vector2(this.container.clientWidth, this.container.clientHeight) },
+        'blurSamples': { value: 5 }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform float shiftPixels;
+        uniform vec2 resolution;
+        uniform float blurSamples;
+        varying vec2 vUv;
+        
+        void main() {
+          vec2 texelSize = 1.0 / resolution;
+          // Convert pixel shift to UV coordinates
+          float shiftAmount = shiftPixels / resolution.x;
+          vec3 color = vec3(0.0);
+          
+          // Sample and blur each color channel separately with offset
+          vec3 r = vec3(0.0);
+          vec3 g = vec3(0.0);
+          vec3 b = vec3(0.0);
+          float totalWeight = 0.0;
+          
+          // Blur sampling around the shifted positions
+          for(float x = -2.0; x <= 2.0; x += 1.0) {
+            for(float y = -2.0; y <= 2.0; y += 1.0) {
+              vec2 offset = vec2(x, y) * texelSize * ${rgbConfig.blurIntensity.toFixed(2)};
+              float weight = 1.0 / (1.0 + length(offset) * 10.0);
+              
+              r += texture2D(tDiffuse, vUv + vec2(shiftAmount, 0.0) + offset).rgb * weight;
+              g += texture2D(tDiffuse, vUv + offset).rgb * weight;
+              b += texture2D(tDiffuse, vUv - vec2(shiftAmount, 0.0) + offset).rgb * weight;
+              totalWeight += weight;
+            }
+          }
+          
+          r /= totalWeight;
+          g /= totalWeight;
+          b /= totalWeight;
+          
+          color = vec3(r.r, g.g, b.b);
+          
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `
+    }
+    
+    this.rgbShiftPass = new ShaderPass(BlurredRGBShiftShader)
+    this.rgbShiftPass.enabled = false
+    
+    // Distortion effect variables
+    const distConfig = this.settings.darkModeEffects.distortion
+    this.distortionTime = 0
+    this.lastDistortionUpdate = 0
+    this.distortionUpdateInterval = 1000 / distConfig.updateFPS
+    this.distortionTriggerInterval = distConfig.triggerInterval
+    this.lastDistortionTrigger = 0
+    this.distortionDuration = distConfig.duration
+    this.distortionActive = false
+    this.currentDistortionOffset = 0
+    this.smearPositionSeed = Math.random() * 100 // Position seed that only changes every 4 seconds
+    this.composer.addPass(this.rgbShiftPass)
+    
+    // Custom distortion shader for chunky horizontal shifts
+    const DistortionShader = {
+      uniforms: {
+        'tDiffuse': { value: null },
+        'distortionAmount': { value: 0.0 },
+        'distortionSeed': { value: 0.0 },
+        'smearPositionSeed': { value: 0.0 }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform float distortionAmount;
+        uniform float distortionSeed;
+        uniform float smearPositionSeed;
+        varying vec2 vUv;
+        
+        float random(vec2 st) {
+          return fract(sin(dot(st.xy, vec2(12.9898,78.233)) + distortionSeed) * 43758.5453123);
+        }
+        
+        void main() {
+          vec2 uv = vUv;
+          
+          // Define a small rectangular smear zone (position only changes every 4 seconds)
+          float smearWidth = ${distConfig.smearWidth.toFixed(2)};  // Square - matches height
+          float smearHeight = ${distConfig.smearHeight.toFixed(2)}; // Square
+          float smearX = fract(sin(smearPositionSeed * 12.9898) * 43758.5453) * (1.0 - smearWidth);
+          float smearY = fract(sin(smearPositionSeed * 78.233) * 43758.5453) * (1.0 - smearHeight);
+          
+          // Check if we're inside the smear rectangle
+          bool inSmearZone = uv.x >= smearX && uv.x <= (smearX + smearWidth) &&
+                            uv.y >= smearY && uv.y <= (smearY + smearHeight);
+          
+          // Only apply intense smearing inside the small rectangle
+          if (distortionAmount > 0.0 && inSmearZone) {
+            float localX = (uv.x - smearX) / smearWidth;
+            float repeatCount = ${distConfig.segments.toFixed(1)};
+            float segment = floor(localX * repeatCount);
+            float segmentRandom = random(vec2(smearX, segment + 10.0));
+            uv.y += (segmentRandom - 0.5) * distortionAmount * ${distConfig.intensityMultiplier.toFixed(1)};
+          }
+          
+          gl_FragColor = texture2D(tDiffuse, uv);
+        }
+      `
+    }
+    
+    this.distortionPass = new ShaderPass(DistortionShader)
+    this.distortionPass.enabled = false
+    this.composer.addPass(this.distortionPass)
+    
+    // CRT Glow effect shader
+    const CRTShader = {
+      uniforms: {
+        'tDiffuse': { value: null },
+        'resolution': { value: new THREE.Vector2(this.container.clientWidth, this.container.clientHeight) },
+        'brightness': { value: 1.05 },
+        'scanlineIntensity': { value: 0.15 },
+        'vignetteIntensity': { value: 0.5 },
+        'glowIntensity': { value: 0.3 }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D tDiffuse;
+        uniform vec2 resolution;
+        uniform float brightness;
+        uniform float scanlineIntensity;
+        uniform float vignetteIntensity;
+        uniform float glowIntensity;
+        varying vec2 vUv;
+        
+        void main() {
+          vec4 texel = texture2D(tDiffuse, vUv);
+          vec3 color = texel.rgb;
+          
+          // Phosphor glow (bloom-like effect)
+          vec2 texelSize = 1.0 / resolution;
+          vec3 glow = vec3(0.0);
+          float glowSamples = 0.0;
+          for(float x = -3.0; x <= 3.0; x += 1.0) {
+            for(float y = -3.0; y <= 3.0; y += 1.0) {
+              vec2 offset = vec2(x, y) * texelSize * 2.5;
+              glow += texture2D(tDiffuse, vUv + offset).rgb;
+              glowSamples += 1.0;
+            }
+          }
+          glow /= glowSamples;
+          color = mix(color, glow, glowIntensity);
+          
+          // Brightness adjustment
+          color *= brightness;
+          
+          gl_FragColor = vec4(color, texel.a);
+        }
+      `
+    }
+    
+    this.crtPass = new ShaderPass(CRTShader)
+    this.crtPass.enabled = false
+    this.composer.addPass(this.crtPass)
 
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
@@ -95,6 +309,9 @@ export class ThreeScene {
     this.paused = false
     this.darkMode = false
     
+    // RGB shift animation
+    this.rgbShiftTime = 0
+    
     this.setupMouseControls()
   }
   
@@ -105,6 +322,17 @@ export class ThreeScene {
     
     // Update renderer
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
+    this.composer.setSize(this.container.clientWidth, this.container.clientHeight)
+    
+    // Update CRT resolution uniform
+    if (this.crtPass) {
+      this.crtPass.uniforms['resolution'].value.set(this.container.clientWidth, this.container.clientHeight)
+    }
+    
+    // Update RGB shift resolution
+    if (this.rgbShiftPass) {
+      this.rgbShiftPass.uniforms['resolution'].value.set(this.container.clientWidth, this.container.clientHeight)
+    }
     
     // Update letter layout for mobile/desktop
     this.updateLetterSpacing(this.settings.spacing, this.settings.lineHeight)
@@ -112,6 +340,44 @@ export class ThreeScene {
 
   update() {
     if (this.paused) return
+    
+    // Animate RGB shift effect if enabled
+    if (this.rgbShiftPass && this.rgbShiftPass.enabled) {
+      this.rgbShiftTime += this.settings.darkModeEffects.rgbShift.animationSpeed
+      // Fade in and out between 0 and maxShiftPixels
+      const pulse = (Math.sin(this.rgbShiftTime) + 1) / 2 // 0 to 1
+      const shiftAmount = pulse * this.settings.darkModeEffects.rgbShift.maxShiftPixels
+      this.rgbShiftPass.uniforms['shiftPixels'].value = shiftAmount
+    }
+    
+    // Update distortion/slicing effect if enabled
+    if (this.distortionPass.enabled) {
+      // Trigger distortion every 4 seconds
+      const now = Date.now()
+      
+      // Check if we should trigger a new distortion burst
+      if (now - this.lastDistortionTrigger > this.distortionTriggerInterval) {
+        this.lastDistortionTrigger = now
+        this.distortionActive = true
+        // Generate new position for this burst
+        this.smearPositionSeed = Math.random() * 100
+      }
+      
+      // Check if current distortion burst should end
+      if (this.distortionActive && now - this.lastDistortionTrigger > this.distortionDuration) {
+        this.distortionActive = false
+        this.distortionPass.uniforms['distortionAmount'].value = 0
+      }
+      
+      // Update distortion at 12fps while active
+      if (this.distortionActive && now - this.lastDistortionUpdate > this.distortionUpdateInterval) {
+        this.lastDistortionUpdate = now
+        // Random offset and seed for chunky shifts (but position stays the same)
+        this.distortionPass.uniforms['distortionAmount'].value = Math.random() * 0.08
+        this.distortionPass.uniforms['distortionSeed'].value = Math.random() * 100
+        this.distortionPass.uniforms['smearPositionSeed'].value = this.smearPositionSeed
+      }
+    }
     
     if (this.letterManager) {
       this.letterManager.update()
@@ -134,7 +400,8 @@ export class ThreeScene {
       }
     }
     
-    this.renderer.render(this.scene, this.camera)
+    // Render with post-processing
+    this.composer.render()
   }
 
   toggleBoundingBoxes(visible) {
@@ -358,17 +625,35 @@ export class ThreeScene {
       // Dark mode: black background, white shapes in wireframe
       this.scene.background = new THREE.Color(0x000000)
       document.body.style.backgroundColor = '#000000'
+      
+      // Enable distortion/slicing and RGB shift (CRT glow off)
+      this.rgbShiftPass.enabled = true
+      this.distortionPass.enabled = true
+      this.crtPass.enabled = false
     } else {
       // Restore normal background
       const bgColor = localStorage.getItem('bgColor') || '#ffffff'
       this.scene.background = new THREE.Color(bgColor)
       document.body.style.backgroundColor = bgColor
+      
+      // Disable all effects
+      this.rgbShiftPass.enabled = false
+      this.distortionPass.enabled = false
+      this.crtPass.enabled = false
     }
     
     // Update all letter materials
     if (this.letterManager) {
       this.letterManager.setDarkMode(enabled)
     }
+  }
+
+  regenerateLetters() {
+    this.letterManager.regenerateLetters()
+    // Reapply spacing after regeneration
+    this.updateLetterSpacing(this.settings.spacing, this.settings.lineHeight)
+    // Reapply current dark mode state to new letters immediately
+    this.letterManager.setDarkMode(this.darkMode || false)
   }
   
   dispose() {
