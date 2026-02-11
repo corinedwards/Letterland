@@ -26,7 +26,7 @@ export class ShapeFileLoader {
   async loadConfig() {
     try {
       // Add timestamp to prevent caching
-      const response = await fetch(`/letters/shapes-config.json?t=${Date.now()}`)
+      const response = await fetch(`${import.meta.env.BASE_URL}letters/shapes-config.json?t=${Date.now()}`)
       this.config = await response.json()
       if (this.config._defaults) {
         this.defaults = { ...this.defaults, ...this.config._defaults }
@@ -64,12 +64,12 @@ export class ShapeFileLoader {
         const key = `${letter}-${name}`
         
         if (ext === 'png' || ext === 'jpg' || ext === 'jpeg') {
-          textures[key] = path.replace('/public', '')
+          textures[key] = import.meta.env.BASE_URL + path.replace('/public/', '')
         } else {
           shapes[letter].push({
             name,
             key,
-            path: path.replace('/public', ''),
+            path: import.meta.env.BASE_URL + path.replace('/public/', ''),
             type: ext === 'svg' ? 'svg' : 'glb',
             config: this.config[key] || {}
           })

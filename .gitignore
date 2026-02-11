@@ -27,6 +27,9 @@ dist-ssr
 *.blend1
 *.blend2
 
+# Affinity Designer lock files
+*.af~lock~
+
 # Build files
 build/
 .cache/
