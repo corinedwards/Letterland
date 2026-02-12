@@ -199,26 +199,45 @@ export class ShapeFileLoader {
 
   async loadSVG(path, settings) {
     const loader = new SVGLoader()
-    
+
     return new Promise((resolve, reject) => {
       loader.load(
         path,
         (data) => {
           const paths = data.paths
           const group = new THREE.Group()
-          
+
+          // First calculate dimensions to determine scaling
+          const tempBox = new THREE.Box3()
           paths.forEach((path) => {
             const shapes = SVGLoader.createShapes(path)
-            
             shapes.forEach((shape) => {
+              const tempGeom = new THREE.ExtrudeGeometry(shape, { depth: 0, bevelEnabled: false })
+              const tempMesh = new THREE.Mesh(tempGeom)
+              tempBox.expandByObject(tempMesh)
+            })
+          })
+          const tempSize = tempBox.getSize(new THREE.Vector3())
+          const maxDim = Math.max(tempSize.x, tempSize.y, tempSize.z)
+
+          // Create geometry with extrude depth as percentage of shape size
+          paths.forEach((path) => {
+            const shapes = SVGLoader.createShapes(path)
+
+            shapes.forEach((shape) => {
+              // Interpret extrudeDepth as percentage: 100 = same as largest dimension
+              const depthValue = ((settings.extrudeDepth ?? this.defaults.extrudeDepth) / 100) * maxDim
+              const bevelThicknessValue = ((settings.bevelThickness ?? this.defaults.bevelThickness) / 100) * maxDim
+              const bevelSizeValue = ((settings.bevelSize ?? this.defaults.bevelSize) / 100) * maxDim
+
               const extrudeSettings = {
-                depth: settings.extrudeDepth ?? this.defaults.extrudeDepth,
+                depth: depthValue,
                 bevelEnabled: true,
-                bevelThickness: settings.bevelThickness ?? this.defaults.bevelThickness,
-                bevelSize: settings.bevelSize ?? this.defaults.bevelSize,
+                bevelThickness: bevelThicknessValue,
+                bevelSize: bevelSizeValue,
                 bevelSegments: 3
               }
-              
+
               const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
               const emissive = new THREE.Color(settings.emissive || this.defaults.emissive)
               const material = new THREE.MeshStandardMaterial({
@@ -229,22 +248,22 @@ export class ShapeFileLoader {
                 emissive: emissive,
                 emissiveIntensity: settings.emissiveIntensity ?? this.defaults.emissiveIntensity
               })
-              
+
               const mesh = new THREE.Mesh(geometry, material)
               group.add(mesh)
             })
           })
-          
+
           // Center and scale
           const box = new THREE.Box3().setFromObject(group)
           const center = box.getCenter(new THREE.Vector3())
           const size = box.getSize(new THREE.Vector3())
-          const maxDim = Math.max(size.x, size.y, size.z)
-          const scale = 2 / maxDim
+          const finalMaxDim = Math.max(size.x, size.y, size.z)
+          const normalizationScale = 2 / finalMaxDim
 
           // Apply custom scale factor from config
           const customScale = settings.scale ?? this.defaults.scale
-          const finalScale = scale * customScale
+          const finalScale = normalizationScale * customScale
 
           // Center first by moving all children
           group.children.forEach(child => {

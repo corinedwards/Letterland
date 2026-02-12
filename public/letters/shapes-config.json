@@ -60,15 +60,20 @@
     "rotationY": 0,
     "rotationZ": 0
   },
-  "C-Raver": {
+  "C-Pacman, O-Dreamcast, R-YagiSega, I-CaliforniaGames, N-Pong" : {
+      "color": "#FFDF00",
+      "emissive": "#FFD639",
+      "emissiveIntensity": 0.4,
+      "extrudeDepth": 24
+  },
+  "C-Raver, R-Raver, I-Raver, N-Raver": {
+    "color": "#862AFE",
+    "emissive": "#2AFE59",
+    "emissiveIntensity": 0.8,
+    "extrudeDepth": 36,
     "color": "#ff6600",
     "metalness": 0,
-    "roughness": 0.3,
-    "extrudeDepth": 64,
-    "bevelThickness": 0,
-    "bevelSize": 0,
-    "emissive": "#ff4b00",
-    "emissiveIntensity": 0.6
+    "roughness": 0.3
   },
  "C-Chunky":{
     "wireframe": false,
@@ -80,12 +85,6 @@
     "bevelSize":6,
     "bevelThickness":36
  },
-  "C-Pacman": {
-      "color": "#FFDF00",
-      "emissive": "#FFD639",
-      "emissiveIntensity": 0.4,
-      "extrudeDepth": 156
-  },
   "O-diskette-bumps": {
     "rotationZ": 3.14,
     "rotationY": 3.14,
@@ -101,10 +100,7 @@
     "extrudeDepth": 128
   },
   "O-Dreamcast":{
-    "color": "#FFDF00",
-    "emissive": "#FFD639",
-    "emissiveIntensity": 0.4,
-    "extrudeDepth": 164
+
   },
   "N-Chunky":{
     "color": "#00fdff",
@@ -123,10 +119,7 @@
     "roughness": 0.1
   },
   "R-YagiSega": {
-    "color": "#FFDF00",
-    "emissive": "#FFD639",
-    "emissiveIntensity": 0.4,
-    "extrudeDepth": 120
+
   },
   "I-diamondEye": {
     "color": "#FED600",
@@ -136,15 +129,7 @@
     "roughness": 0.1,
     "extrudeDepth": 96
   },
-  "I-Raver":{
-    "color": "#5e30eb",
-    "emissive": "#5e30eb",
-    "emissiveIntensity": 0.4,
-    "wireframe": false,
-    "extrudeDepth": 90,
-    "bevelThickness": 2,
-    "bevelSize": 4
-    },
+
   "I-PaulFranck":{
     "color": "#e3972e",
     "emissive": "#ffcf85",
@@ -153,10 +138,7 @@
     "metalness": 1.8
     },
   "I-CaliforniaGames":{
-    "color": "#FFDF00",
-    "emissive": "#FFD639",
-    "emissiveIntensity": 0.4,
-    "extrudeDepth": 80
+   
   },
   "N-Diagram":{
     "color": "#8db3da",
@@ -172,16 +154,8 @@
     "textureFilter": "nearest",
     "texture": "N.Giraffe.png"
   },
-   "N-Raver":{
-    "color": "#862AFE",
-    "emissive": "#2AFE59",
-    "emissiveIntensity": 0.8,
-    "extrudeDepth": 56
-  },
+
   "N-Pong":{
-    "color": "#FFDF00",
-    "emissive": "#FFD639",
-    "emissiveIntensity": 0.4,
-    "extrudeDepth": 156
+  
   }
 }
