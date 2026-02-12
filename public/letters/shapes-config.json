@@ -51,7 +51,7 @@
     "wireframe": false,
     "emissive": "#000000",
     "emissiveIntensity": 0,
-    "extrudeDepth": 200,
+    "extrudeDepth": 10,
     "bevelThickness": 0,
     "bevelSize": 0,
     "textureFlipY": false,
@@ -75,39 +75,24 @@
     "metalness": 0,
     "roughness": 0.3
   },
- "C-Chunky":{
-    "wireframe": false,
-    "color": "#4fff7b",
-    "emissive": "#4fff7b",
-    "emissiveIntensity": 3.5,
-    "metalness": 8,
-    "roughness": 0,
-    "bevelSize":6,
-    "bevelThickness":36
- },
+  "C-Ooze, O-Ooze, R-Ooze, I-Ooze, N-Ooze" : {
+    "color": "#ff6251",
+    "emissive": "#ff8647",
+    "emissiveIntensity": 0.4
+  },
+  "C-Chunky, O-Chunky, R-Chunky, I-Chunky, N-Chunky" : {
+    "color": "#000",
+    "emissive": "#000",
+    "emissiveIntensity": 0.4,
+    "extrudeDepth": 56,
+    "wireframe": true
+  },
   "O-diskette-bumps": {
     "rotationZ": 3.14,
     "rotationY": 3.14,
     "texture": "O-diskette-bumps.png",
     "scale": 0.8
   },
-  "O-Chunky":{
-    "color":"#d293ff",
-    "metalness":0.4,
-    "roughness":0.1,
-    "emissiveIntensity":0.6,
-    "emissive":"#d293ff",
-    "extrudeDepth": 128
-  },
-  "O-Dreamcast":{
-
-  },
-  "N-Chunky":{
-    "color": "#00fdff",
-    "emissive": "#00f900",
-    "emissiveIntensity": 0.4,
-    "wireframe": true
-    },
   "R-Bubbled": {
     "color": "deeppink",
     "emissive": "fuchsia",
@@ -118,31 +103,16 @@
     "metalness": 0.5,
     "roughness": 0.1
   },
-  "R-YagiSega": {
-
-  },
-  "I-diamondEye": {
-    "color": "#FED600",
-    "emissive": "#FEEA00",
-    "emissiveIntensity": 0.6,
-    "metalness": 0.6,
-    "roughness": 0.1,
-    "extrudeDepth": 96
-  },
-
   "I-PaulFranck":{
     "color": "#e3972e",
     "emissive": "#ffcf85",
     "emissiveIntensity": 1,
-    "extrudeDepth": 90,
+    "extrudeDepth": 10,
     "metalness": 1.8
     },
-  "I-CaliforniaGames":{
-   
-  },
   "N-Diagram":{
     "color": "#8db3da",
-    "extrudeDepth": 24
+    "extrudeDepth": 18
   },
   "N-Giraffe":{
     "emissiveIntensity": 8.4,
@@ -153,9 +123,5 @@
     "roughness": 1,
     "textureFilter": "nearest",
     "texture": "N.Giraffe.png"
-  },
-
-  "N-Pong":{
-  
   }
 }
