@@ -81,18 +81,18 @@
     "bevelThickness":36
  },
   "C-Pacman": {
-     "color": "#ffeb00",
-     "emissive": "#ffeb00",
-     "emissiveIntensity": 0.5,
-     "metalness":  0.1,
-     "roughness": 0.8
+      "color": "#FFDF00",
+      "emissive": "#FFD639",
+      "emissiveIntensity": 0.4,
+      "extrudeDepth": 156
   },
- "O-diskette-bumps": {
+  "O-diskette-bumps": {
     "rotationZ": 3.14,
     "rotationY": 3.14,
-    "texture": "O-diskette-bumps.png"
+    "texture": "O-diskette-bumps.png",
+    "scale": 0.8
   },
-    "O-Chunky":{
+  "O-Chunky":{
     "color":"#d293ff",
     "metalness":0.4,
     "roughness":0.1,
@@ -101,12 +101,10 @@
     "extrudeDepth": 128
   },
   "O-Dreamcast":{
-    "color":"#8910ff",
-    "metalness":0.4,
-    "roughness":0.1,
-    "emissiveIntensity":0.6,
-    "emissive":"#8910ff",
-    "extrudeDepth": 64
+    "color": "#FFDF00",
+    "emissive": "#FFD639",
+    "emissiveIntensity": 0.4,
+    "extrudeDepth": 164
   },
   "N-Chunky":{
     "color": "#00fdff",
@@ -125,14 +123,10 @@
     "roughness": 0.1
   },
   "R-YagiSega": {
-    "color": "#019cf4",
-    "emissive": "#0097ff",
-    "emissiveIntensity": 0.8,
-    "extrudeDepth": 120,
-    "bevelThickness": 2,
-    "bevelSize": 2,
-    "metalness": 0,
-    "roughness": 0.1
+    "color": "#FFDF00",
+    "emissive": "#FFD639",
+    "emissiveIntensity": 0.4,
+    "extrudeDepth": 120
   },
   "I-diamondEye": {
     "color": "#FED600",
@@ -159,10 +153,10 @@
     "metalness": 1.8
     },
   "I-CaliforniaGames":{
-    "color": "#00e6ed",
-    "emissive": "#00cbdb",
+    "color": "#FFDF00",
+    "emissive": "#FFD639",
     "emissiveIntensity": 0.4,
-    "extrudeDepth": 48
+    "extrudeDepth": 80
   },
   "N-Diagram":{
     "color": "#8db3da",
@@ -183,11 +177,11 @@
     "emissive": "#2AFE59",
     "emissiveIntensity": 0.8,
     "extrudeDepth": 56
-    },
-    "N-Pong":{
-      "color": "#FFDF00",
-      "emissive": "#FFD639",
-      "emissiveIntensity": 0.4,
-      "extrudeDepth": 156
-     }
+  },
+  "N-Pong":{
+    "color": "#FFDF00",
+    "emissive": "#FFD639",
+    "emissiveIntensity": 0.4,
+    "extrudeDepth": 156
+  }
 }

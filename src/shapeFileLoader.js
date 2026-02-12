@@ -19,7 +19,8 @@ export class ShapeFileLoader {
       textureFilter: 'nearest',
       rotationX: Math.PI,
       rotationY: 0,
-      rotationZ: 0
+      rotationZ: 0,
+      scale: 1
     }
   }
 
@@ -148,9 +149,13 @@ export class ShapeFileLoader {
           const size = box.getSize(new THREE.Vector3())
           const maxDim = Math.max(size.x, size.y, size.z)
           const scale = 2 / maxDim
-          
+
+          // Apply custom scale factor from config
+          const customScale = settings.scale ?? this.defaults.scale
+          const finalScale = scale * customScale
+
           model.position.sub(center)
-          model.scale.set(scale, scale, scale)
+          model.scale.set(finalScale, finalScale, finalScale)
           
           // Apply rotation settings to each mesh (to override any baked-in rotations)
           const rotX = settings.rotationX ?? this.defaults.rotationX ?? 0
@@ -219,13 +224,17 @@ export class ShapeFileLoader {
           const size = box.getSize(new THREE.Vector3())
           const maxDim = Math.max(size.x, size.y, size.z)
           const scale = 2 / maxDim
-          
+
+          // Apply custom scale factor from config
+          const customScale = settings.scale ?? this.defaults.scale
+          const finalScale = scale * customScale
+
           // Center first by moving all children
           group.children.forEach(child => {
             child.position.sub(center)
           })
           // Then scale the whole group (flip Y to correct SVG orientation)
-          group.scale.set(scale, -scale, scale)
+          group.scale.set(finalScale, -finalScale, finalScale)
           
           resolve(group)
         },
