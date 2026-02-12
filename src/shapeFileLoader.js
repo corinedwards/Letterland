@@ -28,7 +28,24 @@ export class ShapeFileLoader {
     try {
       // Add timestamp to prevent caching
       const response = await fetch(`${import.meta.env.BASE_URL}letters/shapes-config.json?t=${Date.now()}`)
-      this.config = await response.json()
+      const rawConfig = await response.json()
+
+      // Expand comma-separated keys into individual entries
+      this.config = {}
+      for (const [key, value] of Object.entries(rawConfig)) {
+        if (key.includes(',')) {
+          // Split comma-separated keys and assign to each
+          const keys = key.split(',').map(k => k.trim())
+          keys.forEach(k => {
+            // Merge with existing config for this key (allows individual overrides)
+            this.config[k] = { ...value, ...this.config[k] }
+          })
+        } else {
+          // Merge with any previously set values from comma-separated keys
+          this.config[key] = { ...this.config[key], ...value }
+        }
+      }
+
       if (this.config._defaults) {
         this.defaults = { ...this.defaults, ...this.config._defaults }
       }
