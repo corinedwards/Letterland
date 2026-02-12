@@ -1,6 +1,9 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js'
+import { EdgesGeometry } from 'three'
+import { LineSegments } from 'three'
+import { LineBasicMaterial } from 'three'
 
 export class ShapeFileLoader {
   constructor() {
@@ -10,6 +13,8 @@ export class ShapeFileLoader {
       metalness: 0.5,
       roughness: 0.3,
       wireframe: false,
+      edges: false,
+      edgeColor: '#000000',
       emissive: '#000000',
       emissiveIntensity: 0.2,
       extrudeDepth: 120,
@@ -178,7 +183,7 @@ export class ShapeFileLoader {
           const rotX = settings.rotationX ?? this.defaults.rotationX ?? 0
           const rotY = settings.rotationY ?? this.defaults.rotationY ?? 0
           const rotZ = settings.rotationZ ?? this.defaults.rotationZ ?? 0
-          
+
           if (rotX !== 0 || rotY !== 0 || rotZ !== 0) {
             model.traverse((child) => {
               if (child.isMesh) {
@@ -188,7 +193,26 @@ export class ShapeFileLoader {
               }
             })
           }
-          
+
+          // Add edges if enabled (non-x-ray wireframe)
+          const useEdges = settings.edges ?? this.defaults.edges
+          if (useEdges) {
+            model.traverse((child) => {
+              if (child.isMesh) {
+                const edgesGeometry = new EdgesGeometry(child.geometry)
+                const edgesMaterial = new LineBasicMaterial({
+                  color: settings.edgeColor || this.defaults.edgeColor
+                })
+                const edges = new LineSegments(edgesGeometry, edgesMaterial)
+                // Position edges to match the mesh
+                edges.position.copy(child.position)
+                edges.rotation.copy(child.rotation)
+                edges.scale.copy(child.scale)
+                model.add(edges)
+              }
+            })
+          }
+
           resolve(model)
         },
         undefined,
@@ -240,17 +264,30 @@ export class ShapeFileLoader {
 
               const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings)
               const emissive = new THREE.Color(settings.emissive || this.defaults.emissive)
+
+              const useEdges = settings.edges ?? this.defaults.edges
+
               const material = new THREE.MeshStandardMaterial({
                 color: settings.color || this.defaults.color,
                 metalness: settings.metalness ?? this.defaults.metalness,
                 roughness: settings.roughness ?? this.defaults.roughness,
-                wireframe: settings.wireframe ?? this.defaults.wireframe,
+                wireframe: useEdges ? false : (settings.wireframe ?? this.defaults.wireframe),
                 emissive: emissive,
                 emissiveIntensity: settings.emissiveIntensity ?? this.defaults.emissiveIntensity
               })
 
               const mesh = new THREE.Mesh(geometry, material)
               group.add(mesh)
+
+              // Add edges if enabled (non-x-ray wireframe)
+              if (useEdges) {
+                const edgesGeometry = new EdgesGeometry(geometry)
+                const edgesMaterial = new LineBasicMaterial({
+                  color: settings.edgeColor || this.defaults.edgeColor
+                })
+                const edges = new LineSegments(edgesGeometry, edgesMaterial)
+                group.add(edges)
+              }
             })
           })
 
