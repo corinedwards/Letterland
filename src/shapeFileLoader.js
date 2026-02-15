@@ -179,20 +179,12 @@ export class ShapeFileLoader {
           model.position.sub(center)
           model.scale.set(finalScale, finalScale, finalScale)
           
-          // Apply rotation settings to each mesh (to override any baked-in rotations)
+          // Apply rotation to the model group (preserves individual mesh rotations from Blender)
           const rotX = settings.rotationX ?? this.defaults.rotationX ?? 0
           const rotY = settings.rotationY ?? this.defaults.rotationY ?? 0
           const rotZ = settings.rotationZ ?? this.defaults.rotationZ ?? 0
 
-          if (rotX !== 0 || rotY !== 0 || rotZ !== 0) {
-            model.traverse((child) => {
-              if (child.isMesh) {
-                child.rotation.x = rotX
-                child.rotation.y = rotY
-                child.rotation.z = rotZ
-              }
-            })
-          }
+          model.rotation.set(rotX, rotY, rotZ)
 
           // Add edges if enabled (non-x-ray wireframe)
           const useEdges = settings.edges ?? this.defaults.edges
