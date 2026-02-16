@@ -128,27 +128,43 @@ export class ShapeFileLoader {
           if (settings.texture) {
             try {
               const texture = await new THREE.TextureLoader().loadAsync(settings.texture)
-              
+
               // Texture flip setting
               texture.flipY = settings.textureFlipY ?? this.defaults.textureFlipY ?? false
-              
+
               // Texture filtering (nearest/linear)
               const useNearest = (settings.textureFilter ?? this.defaults.textureFilter) === 'nearest'
               texture.minFilter = useNearest ? THREE.NearestFilter : THREE.LinearFilter
               texture.magFilter = useNearest ? THREE.NearestFilter : THREE.LinearFilter
-              
+
               const emissiveIntensity = settings.emissiveIntensity ?? this.defaults.emissiveIntensity
+              const isBlender = settings['3dapp'] === 'blender'
+
               model.traverse((child) => {
                 if (child.isMesh) {
-                  child.material.map = texture
-                  child.material.color.setHex(0xffffff) // WHITE so texture shows correctly
-                  child.material.metalness = settings.metalness ?? this.defaults.metalness
-                  child.material.roughness = settings.roughness ?? this.defaults.roughness
-                  // Use texture as emissive map so the texture colours glow, not a flat tint
-                  if (emissiveIntensity > 0 && child.material.emissive) {
-                    child.material.emissiveMap = texture
-                    child.material.emissive.setHex(0xffffff)
-                    child.material.emissiveIntensity = emissiveIntensity
+                  if (isBlender) {
+                    // Blender GLBs: replace material entirely for full config control
+                    child.material = new THREE.MeshStandardMaterial({
+                      map: texture,
+                      color: 0xffffff,
+                      metalness: settings.metalness ?? this.defaults.metalness,
+                      roughness: settings.roughness ?? this.defaults.roughness,
+                      emissiveMap: emissiveIntensity > 0 ? texture : null,
+                      emissive: emissiveIntensity > 0 ? new THREE.Color(0xffffff) : new THREE.Color(0x000000),
+                      emissiveIntensity: emissiveIntensity
+                    })
+                  } else {
+                    // Blockbench GLBs: patch existing material to preserve z-fighting fixes
+                    child.material.map = texture
+                    child.material.color.setHex(0xffffff)
+                    child.material.metalness = settings.metalness ?? this.defaults.metalness
+                    child.material.roughness = settings.roughness ?? this.defaults.roughness
+                    // Guard: MeshBasicMaterial has no emissive property
+                    if (emissiveIntensity > 0 && child.material.emissive) {
+                      child.material.emissiveMap = texture
+                      child.material.emissive.setHex(0xffffff)
+                      child.material.emissiveIntensity = emissiveIntensity
+                    }
                   }
                   child.material.needsUpdate = true
                 }

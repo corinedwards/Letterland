@@ -95,12 +95,13 @@
     "scale": 1.4
   },
   "O-Diskette": {
+    "3dapp": "blender",
     "texture": "O-Diskette.png",
     "scale": 0.8,
     "rotationX": 0,
     "rotationY": 0,
     "rotationZ": 0,
-     "emissiveIntensity": 0.5
+    "emissiveIntensity": 0.6
   },
   "O-Archive, I-PaulFranck":{
     "color": "#a19a7a",
@@ -135,6 +136,6 @@
     "roughness": 0,
     "metalness": 0,
     "texture": "GrfGlitch.png",
-    "emissiveIntensity": 0.5
+    "emissiveIntensity": 0.4
   }
 }
