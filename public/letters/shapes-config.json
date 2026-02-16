@@ -95,11 +95,11 @@
     "scale": 1.4
   },
   "O-Diskette": {
-    "rotationX": 1.5708,
-    "rotationY": 1.5708,
-    "rotationZ": 1.5708,
-    "texture": "O-diskette.png",
-    "scale": 0.8
+    "texture": "O-Diskette.png",
+    "scale": 0.8,
+    "rotationX": 0,
+    "rotationY": 0,
+    "rotationZ": 0
   },
   "R-Bubbled": {
     "color": "deeppink",
@@ -138,6 +138,11 @@
     "rotationZ": 0,
     "roughness": 1,
     "textureFilter": "nearest",
-    "texture": "N.Giraffe.png"
+    "texture": "N-Giraffe.png"
+  },
+    "N-GrfGlitch":{
+    "roughness": 1,
+     "metalness": 0.1,
+    "texture": "GrfGlitch.png"
   }
 }
