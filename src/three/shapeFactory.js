@@ -38,8 +38,10 @@ export class ShapeFactory {
           console.log(`Loading ${shapeData.key}...`)
           const settings = this.fileLoader.getSettings(shapeData.key)
           
-          // Add texture path if exists
-          if (shapeData.texture) {
+          // Config texture takes priority; auto-matched file is fallback
+          if (settings.texture) {
+            settings.texture = import.meta.env.BASE_URL + 'letters/' + settings.texture
+          } else if (shapeData.texture) {
             settings.texture = shapeData.texture
           }
           

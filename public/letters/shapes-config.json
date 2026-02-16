@@ -101,7 +101,7 @@
     "rotationX": 0,
     "rotationY": 0,
     "rotationZ": 0,
-    "emissiveIntensity": 0.6
+    "emissiveIntensity": 1.1
   },
   "O-Archive, I-PaulFranck":{
     "color": "#a19a7a",
@@ -133,9 +133,8 @@
     "texture": "N-Giraffe.png"
   },
     "N-GrfGlitch":{
-    "roughness": 0,
-    "metalness": 0,
-    "texture": "GrfGlitch.png",
-    "emissiveIntensity": 0.4
+    "3dapp": "blockbench",
+    "texture": "N-GiraffeNatural.png",
+    "emissiveIntensity": 0.7
   }
 }

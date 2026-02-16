@@ -138,11 +138,11 @@ export class ShapeFileLoader {
               texture.magFilter = useNearest ? THREE.NearestFilter : THREE.LinearFilter
 
               const emissiveIntensity = settings.emissiveIntensity ?? this.defaults.emissiveIntensity
-              const isBlender = settings['3dapp'] === 'blender'
+              const threeApp = settings['3dapp']
 
               model.traverse((child) => {
                 if (child.isMesh) {
-                  if (isBlender) {
+                  if (threeApp === 'blender') {
                     // Blender GLBs: replace material entirely for full config control
                     child.material = new THREE.MeshStandardMaterial({
                       map: texture,
@@ -153,7 +153,7 @@ export class ShapeFileLoader {
                       emissive: emissiveIntensity > 0 ? new THREE.Color(0xffffff) : new THREE.Color(0x000000),
                       emissiveIntensity: emissiveIntensity
                     })
-                  } else {
+                  } else if (threeApp === 'blockbench') {
                     // Blockbench GLBs: patch existing material to preserve z-fighting fixes
                     child.material.map = texture
                     child.material.color.setHex(0xffffff)
@@ -165,6 +165,8 @@ export class ShapeFileLoader {
                       child.material.emissive.setHex(0xffffff)
                       child.material.emissiveIntensity = emissiveIntensity
                     }
+                  } else {
+                    console.warn(`Unknown or missing 3dapp value "${threeApp}" for textured GLB — no material applied`)
                   }
                   child.material.needsUpdate = true
                 }
