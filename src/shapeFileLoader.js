@@ -137,10 +137,19 @@ export class ShapeFileLoader {
               texture.minFilter = useNearest ? THREE.NearestFilter : THREE.LinearFilter
               texture.magFilter = useNearest ? THREE.NearestFilter : THREE.LinearFilter
               
+              const emissiveIntensity = settings.emissiveIntensity ?? this.defaults.emissiveIntensity
               model.traverse((child) => {
                 if (child.isMesh) {
                   child.material.map = texture
                   child.material.color.setHex(0xffffff) // WHITE so texture shows correctly
+                  child.material.metalness = settings.metalness ?? this.defaults.metalness
+                  child.material.roughness = settings.roughness ?? this.defaults.roughness
+                  // Use texture as emissive map so the texture colours glow, not a flat tint
+                  if (emissiveIntensity > 0 && child.material.emissive) {
+                    child.material.emissiveMap = texture
+                    child.material.emissive.setHex(0xffffff)
+                    child.material.emissiveIntensity = emissiveIntensity
+                  }
                   child.material.needsUpdate = true
                 }
               })

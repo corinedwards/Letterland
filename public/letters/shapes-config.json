@@ -99,17 +99,8 @@
     "scale": 0.8,
     "rotationX": 0,
     "rotationY": 0,
-    "rotationZ": 0
-  },
-  "R-Bubbled": {
-    "color": "deeppink",
-    "emissive": "fuchsia",
-    "emissiveIntensity": 0.8,
-    "extrudeDepth": 120,
-    "bevelThickness": 114,
-    "bevelSize": 20,
-    "metalness": 0.5,
-    "roughness": 0.1
+    "rotationZ": 0,
+     "emissiveIntensity": 0.5
   },
   "O-Archive, I-PaulFranck":{
     "color": "#a19a7a",
@@ -141,8 +132,9 @@
     "texture": "N-Giraffe.png"
   },
     "N-GrfGlitch":{
-    "roughness": 1,
-     "metalness": 0.1,
-    "texture": "GrfGlitch.png"
+    "roughness": 0,
+    "metalness": 0,
+    "texture": "GrfGlitch.png",
+    "emissiveIntensity": 0.5
   }
 }
