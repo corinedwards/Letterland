@@ -59,53 +59,71 @@ const scene = app.scene
 
 // Control buttons
 const refreshBtn = document.getElementById('refresh')
+const pauseMotionBtn = document.getElementById('pause-motion')
+const darkModeBtn = document.getElementById('dark-mode')
+const bgColorBtn = document.getElementById('bg-color-btn')
 const bgColorPicker = document.getElementById('bg-color')
-const bgColorValue = document.getElementById('bg-color-value')
-const pauseMotionCheckbox = document.getElementById('pause-motion')
-const darkModeCheckbox = document.getElementById('dark-mode')
 
-// Get settings from localStorage (already applied in initApp)
+// Restore settings from localStorage
 const bgColor = localStorage.getItem('bgColor') || '#ffffff'
 const isPaused = localStorage.getItem('isPaused') === 'true'
 const isDarkMode = localStorage.getItem('isDarkMode') === 'true'
 
 bgColorPicker.value = bgColor
-bgColorValue.textContent = bgColor
-pauseMotionCheckbox.checked = isPaused
-darkModeCheckbox.checked = isDarkMode
+pauseMotionBtn.setAttribute('aria-pressed', String(isPaused))
+darkModeBtn.setAttribute('aria-pressed', String(isDarkMode))
 
 scene.setBackgroundColor(bgColor)
 scene.setPaused(isPaused)
 scene.setDarkMode(isDarkMode)
 
+// Apply initial NA states after restoring from localStorage
+updateNAStates()
+
+// Shuffle / regenerate
 refreshBtn.addEventListener('click', () => {
   scene.regenerateLetters()
 })
 
 // Pause motion toggle
-pauseMotionCheckbox.addEventListener('change', (e) => {
-  const paused = e.target.checked
+pauseMotionBtn.addEventListener('click', () => {
+  const paused = pauseMotionBtn.getAttribute('aria-pressed') !== 'true'
+  pauseMotionBtn.setAttribute('aria-pressed', String(paused))
   localStorage.setItem('isPaused', paused)
   scene.setPaused(paused)
+  updateNAStates()
 })
 
 // Dark mode toggle
-darkModeCheckbox.addEventListener('change', (e) => {
-  const darkMode = e.target.checked
+darkModeBtn.addEventListener('click', () => {
+  const darkMode = darkModeBtn.getAttribute('aria-pressed') !== 'true'
+  darkModeBtn.setAttribute('aria-pressed', String(darkMode))
   localStorage.setItem('isDarkMode', darkMode)
   scene.setDarkMode(darkMode)
-  
-  if (darkMode) {
-    document.body.classList.add('dark-mode')
-  } else {
-    document.body.classList.remove('dark-mode')
-  }
+  document.body.classList.toggle('dark-mode', darkMode)
+  updateNAStates()
 })
 
-// Background color picker
+// Background colour — button triggers the hidden colour picker
+bgColorBtn.addEventListener('click', () => {
+  bgColorPicker.click()
+})
+
+function updateNAStates() {
+  const paused = pauseMotionBtn.getAttribute('aria-pressed') === 'true'
+  const darkMode = darkModeBtn.getAttribute('aria-pressed') === 'true'
+  setButtonNA(darkModeBtn, paused)
+  setButtonNA(bgColorBtn, paused || darkMode)
+  setButtonNA(refreshBtn, paused)
+}
+
+function setButtonNA(btn, isNA) {
+  btn.classList.toggle('is-na', isNA)
+  btn.disabled = isNA
+}
+
 bgColorPicker.addEventListener('input', (e) => {
   const color = e.target.value
-  bgColorValue.textContent = color
   localStorage.setItem('bgColor', color)
   scene.setBackgroundColor(color)
   document.body.style.backgroundColor = color
