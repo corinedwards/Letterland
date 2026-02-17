@@ -1,3 +1,8 @@
+/* Button tap animation tuning */
+:root {
+  --btn-tap-scale: 0.95;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -63,6 +68,7 @@ body p{
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
+  mix-blend-mode: difference;
 }
 
 /* Icon buttons — 44×44px touch target (WCAG 2.5.8), no extra border (SVGs have their own frames) */
@@ -75,25 +81,23 @@ body p{
   padding: 0;
   background: transparent;
   border: none;
-  color: #000000;
+  color: #ffffff;
   cursor: pointer;
-  transition: color 0.15s;
 }
 
-.ctrl-btn svg,
-.ctrl-btn .na-icon {
+/* White icons; .controls carries the difference blend against the page backdrop */
+.ctrl-btn svg {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-/* NA icon — hidden by default, shown when button is disabled */
+/* NA icon — external img with black strokes; invert to white so it works with the difference blend */
 .ctrl-btn .na-icon {
   display: none;
-}
-
-.ctrl-btn:hover {
-  color: #000000;
+  width: 100%;
+  height: 100%;
+  filter: invert(1);
 }
 
 /* WCAG 2.2 AA focus indicator: 3px, 3:1+ contrast (2.4.11) */
@@ -102,13 +106,8 @@ body p{
   outline-offset: 2px;
 }
 
-/* Pressed state — visual + aria-pressed for AT (not colour alone) */
-.ctrl-btn[aria-pressed="true"] {
-  color: #000000;
-}
-
 .ctrl-btn:active {
-  transform: scale(0.95);
+  transform: scale(var(--btn-tap-scale));
 }
 
 /* NA / disabled state */
@@ -177,21 +176,8 @@ body.dark-mode .content p {
   color: #ffffff;
 }
 
-body.dark-mode .ctrl-btn {
-  color: #ffffff;
-}
-
-body.dark-mode .ctrl-btn[aria-pressed="true"] {
-  color: #ffffff;
-}
-
 body.dark-mode .ctrl-btn:focus-visible {
   outline-color: #66b3ff;
-}
-
-/* NA icon is an external img (black strokes) — invert in dark mode */
-body.dark-mode .ctrl-btn .na-icon {
-  filter: invert(1);
 }
 
 /* Mobile layout */

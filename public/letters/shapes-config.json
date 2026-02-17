@@ -60,7 +60,7 @@
     "rotationY": 0,
     "rotationZ": 0
   },
-  "C-Pacman, C-ComputerSpace, C-CyberLip, O-Dreamcast, R-YagiSega, I-CaliforniaGames, N-Pong" : {
+  "C-ComputerSpace, C-CyberLip, O-Dreamcast, R-YagiSega, I-CaliforniaGames, N-Pong" : {
       "color": "#FFDF00",
       "emissive": "#FFD639",
       "emissiveIntensity": 0.4,
@@ -90,6 +90,11 @@
     "edges": true,
     "edgeColor": "#003882",
     "edgeColor": "#0311a1"
+  },
+  "C-RCA2" :{
+     "texture": "C-RCA2.png",
+     "roughness": 0.8,
+     "3dapp": "blockbench"
   },
   "O-Moon": {
     "scale": 1.4
