@@ -1,6 +1,6 @@
 /* Button tap animation tuning */
 :root {
-  --btn-tap-scale: 0.95;
+  --btn-tap-scale: 0.75;
 }
 
 * {
@@ -45,6 +45,21 @@ body p{
   mix-blend-mode: difference;
 }
 
+H1, H2, ul li, p{
+  color:#fff;
+  mix-blend-mode: difference;
+}
+
+a:link{
+  color:lightblue;
+  mix-blend-mode: difference;
+}
+
+a:visited{
+  color:lightpink;
+  mix-blend-mode: difference;
+}
+
 #app {
   width: 100%;
   min-height: 100vh;
@@ -58,21 +73,27 @@ body p{
 }
 
 .controls {
-  position: absolute;
+  position: relative;
+  transform: none;
+  left: auto;
+  bottom: auto;
+  padding: 20px;
+  /* position: absolute;
   bottom: 20px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%);*/
   display: flex;
   gap: 8px;
   z-index: 100;
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
-  mix-blend-mode: difference;
+  mix-blend-mode: difference; 
 }
 
 /* Icon buttons — 44×44px touch target (WCAG 2.5.8), no extra border (SVGs have their own frames) */
 .ctrl-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -83,6 +104,18 @@ body p{
   border: none;
   color: #ffffff;
   cursor: pointer;
+}
+
+/* Overlay so iOS receives a direct tap on the color input rather than a programmatic .click() */
+.color-picker-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  padding: 0;
 }
 
 /* White icons; .controls carries the difference blend against the page backdrop */
@@ -149,21 +182,7 @@ main {
   margin: 0 auto;
 }
 
-.content {
-  text-align: center;
-}
 
-.content h1 {
-  font-size: 12pt;
-  margin-bottom: 1rem;
-  color: #000000;
-}
-
-.content p {
-  font-size: 12pt;
-  color: #000000;
-  line-height: 1.6;
-}
 
 /* Dark mode styles */
 body.dark-mode {
@@ -180,6 +199,55 @@ body.dark-mode .ctrl-btn:focus-visible {
   outline-color: #66b3ff;
 }
 
+
+/* Grid stuff*/
+
+
+
+.parent{
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "welcome appointments contributions";
+  gap:2em;
+  padding: 1em;
+  line-height: 1.8em;
+  }
+.parent .child.header{
+    grid-area: header;
+  }
+.parent .child.welcome{
+    grid-area: welcome;
+
+  }
+.parent .child.info{
+    grid-area: info;
+  }
+
+  .parent p,ul li{
+    font-size: medium;
+    font-weight: 100;
+  }
+  .parent h1{
+    font-size: 1.8em;
+    font-weight: 600;
+    margin-bottom: 0;
+
+
+  }
+  .parent h2{
+    font-size:medium;
+    font-weight: 400;
+    padding-bottom:1em;
+
+  }
+
+
+.parent ul li{
+  list-style-position: inside;
+}
+
+  
 /* Mobile layout */
 @media (max-width: 768px) {
   #three-container {
@@ -201,4 +269,17 @@ body.dark-mode .ctrl-btn:focus-visible {
   .content p {
     font-size: 1rem;
   }
+
+  .parent{
+    display: grid;
+    grid-template-areas:
+      "header"
+      "welcome"
+      "appointments"
+      "contributions";
+
+    gap:2em;
+    padding: 2em;
+    }
+  
 }

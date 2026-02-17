@@ -70,8 +70,9 @@
               </linearGradient>
             </defs>
           </svg>
+          <!-- Overlay input so iOS receives a direct tap rather than a programmatic .click() -->
+          <input type="color" id="bg-color" value="#ffffff" class="color-picker-overlay" tabindex="-1" aria-hidden="true" />
         </button>
-        <input type="color" id="bg-color" value="#ffffff" class="visually-hidden" tabindex="-1" aria-hidden="true" />
 
         <button class="ctrl-btn" id="refresh" aria-label="Shuffle letter shapes">
           <img class="na-icon" src="./buttons/NA.svg" alt="" aria-hidden="true" />
@@ -95,8 +96,42 @@
 
       <main>
         <section class="content">
-          <h1>Corin Edwards</h1>
-          <p>Welcome to my portfolio</p>
+          <div class="parent">
+            <div class="child header">
+              <h1>Corin Edwards</h1>
+            </div>
+            <div class="child welcome">
+              <h2>Interaction Designer</h2>  
+              <p>Hello I'm Corin and I design interactive & accesible things to make people smile.  </p>
+            </div>
+            <div class="appointments">
+                <h2>Recent appointments</h2>
+                <ul>
+                  <li>Expedia Group - Experience Designer (Native design systems, Partner Products) </li>
+                  <li>Smart Service Queensland (Queensland Government) - Senior UI/UX Designer</li>
+                  <li>One Stop Shop Strategy &amp; Implementation Office (Queensland Government) - Senior UI/UX Designer, </li>
+                  <li>State Library of Queensland - Interaction Designer</li>
+                </ul>
+            </div>
+            <div class="contributions">
+              <h2>Selected contributions</h2>
+                <ul>
+                  <li>Ability Inclusion Movement (AIM) Australian Chapter lead (Expedia Group)</li>
+                  <li>Accessibility Champion, Level 3 (Expedia Group)</li>
+                  <li>Skill Builders Native Capabilities (Learning sessions in Expedia group campuses in Chicago, Austin, Seattle, Gurgaon & London)</li>
+                  <li>User Interface Community of Practice Chair (Queensland Government)</li>
+                  <li>Disability Action Plan, Content Development Directorate representative (State Library of Queensland)</li>
+                  <li>Consistent User Experience advisory group (Queensland Government)</li>
+                  <li>Freeplay indepenedant Games Festival speaker</li>
+                  <li>Electorfringe Festival speaker &amp; panelist</li>
+                  <li>Otakulture exhibition artist</li>
+                  <li>Killa Chinchilla exhibition artist</li>
+                  <li><a href="https://www.amazon.com/1X1-Pixel-Based-Illustration-Design/dp/B0046LURFM">1x1</a> Vasava Artworks Barcelona contributing illustrator</li>
+                </ul>
+            </div>
+          </div>
+
+          
         </section>
       </main>
     </div>

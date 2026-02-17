@@ -104,10 +104,6 @@ darkModeBtn.addEventListener('click', () => {
   updateNAStates()
 })
 
-// Background colour — button triggers the hidden colour picker
-bgColorBtn.addEventListener('click', () => {
-  bgColorPicker.click()
-})
 
 function updateNAStates() {
   const paused = pauseMotionBtn.getAttribute('aria-pressed') === 'true'
@@ -120,6 +116,9 @@ function updateNAStates() {
 function setButtonNA(btn, isNA) {
   btn.classList.toggle('is-na', isNA)
   btn.disabled = isNA
+  if (btn === bgColorBtn) {
+    bgColorPicker.disabled = isNA
+  }
 }
 
 bgColorPicker.addEventListener('input', (e) => {

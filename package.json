@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "ship": "vite build && cd dist && zip -r ../corin-portfolio-build.zip . -x '*.DS_Store' && cd .. && echo 'corin-portfolio-build.zip ready'"
   },
   "devDependencies": {
     "vite": "^6.0.5"
