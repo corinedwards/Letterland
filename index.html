@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Corin Edwards - Portfolio</title>
+    <script type="module" crossorigin src="./assets/index-BU9sxddK.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CNAuZcYY.css">
+  </head>
+  <body>
+    <!-- Loading overlay -->
+    <div id="loading-overlay">
+      <div>Loading shapes...</div>
+    </div>
+    
+    <div id="app">
+      <div id="three-container"></div>
+      <div class="controls" role="toolbar" aria-label="View controls">
+        <button class="ctrl-btn" id="pause-motion" aria-pressed="false" aria-label="Pause motion">
+          <svg viewBox="0 0 991 1003" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
+            <g transform="translate(-1394.406168,-780.23294)">
+              <g transform="matrix(0.952381,0,0,0.963873,922.384702,-16.521504)">
+                <path d="M1511.811,1095.468L1511.811,1597.445C1511.811,1732.706 1400.672,1842.52 1263.78,1842.52L767.717,1842.52C630.824,1842.52 519.685,1732.706 519.685,1597.445L519.685,1095.468C519.685,960.208 630.824,850.394 767.717,850.394L1263.78,850.394C1400.672,850.394 1511.811,960.208 1511.811,1095.468Z" style="fill:none;stroke:currentColor;stroke-width:47.84px"/>
+              </g>
+              <g transform="translate(13.622047,0)">
+                <g transform="translate(109.110236,0)">
+                  <path d="M1653.543,1086.614L1653.543,1511.811" style="fill:none;stroke:currentColor;stroke-width:45.83px"/>
+                </g>
+                <g transform="translate(340.708661,0)">
+                  <path d="M1653.543,1086.614L1653.543,1511.811" style="fill:none;stroke:currentColor;stroke-width:45.83px"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </button>
+
+        <button class="ctrl-btn" id="dark-mode" aria-pressed="false" aria-label="Dark mode">
+          <img class="na-icon" src="./buttons/NA.svg" alt="" aria-hidden="true" />
+          <svg viewBox="0 0 991 1003" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
+            <g transform="translate(-1394.406168,-2103.067585)">
+              <g transform="matrix(0.952381,0,0,0.963873,922.384702,1306.313141)">
+                <path d="M1511.811,1095.468L1511.811,1597.445C1511.811,1732.706 1400.672,1842.52 1263.78,1842.52L767.717,1842.52C630.824,1842.52 519.685,1732.706 519.685,1597.445L519.685,1095.468C519.685,960.208 630.824,850.394 767.717,850.394L1263.78,850.394C1400.672,850.394 1511.811,960.208 1511.811,1095.468Z" style="fill:none;stroke:currentColor;stroke-width:47.84px"/>
+              </g>
+              <g transform="translate(47.244094,0)">
+                <path d="M2121.119,2834.646C2061.461,2893.084 1979.789,2929.134 1889.764,2929.134C1707.241,2929.134 1559.055,2780.948 1559.055,2598.425C1559.055,2415.902 1707.241,2267.717 1889.764,2267.717C1982.262,2267.717 2065.941,2305.773 2125.984,2367.07" style="fill:none;stroke:currentColor;stroke-width:45.83px"/>
+                <path d="M2125.984,2367.07C2125.984,2367.07 1889.326,2362.205 1889.764,2604.126C1890.223,2858.268 2121.119,2834.646 2121.119,2834.646" style="fill:none;stroke:currentColor;stroke-width:45.83px"/>
+              </g>
+            </g>
+          </svg>
+        </button>
+
+        <button class="ctrl-btn" id="bg-color-btn" aria-label="Choose background colour">
+          <img class="na-icon" src="./buttons/NA.svg" alt="" aria-hidden="true" />
+          <svg viewBox="0 0 991 1003" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
+            <g transform="matrix(1,0,0,1,-213.303609,-2103.067585)">
+              <g transform="matrix(0.952381,0,0,0.963873,-258.717857,1306.313141)">
+                <path d="M1511.811,1095.468L1511.811,1597.445C1511.811,1732.706 1400.672,1842.52 1263.78,1842.52L767.717,1842.52C630.824,1842.52 519.685,1732.706 519.685,1597.445L519.685,1095.468C519.685,960.208 630.824,850.394 767.717,850.394L1263.78,850.394C1400.672,850.394 1511.811,960.208 1511.811,1095.468Z" style="fill:none;stroke:currentColor;stroke-width:47.84px"/>
+              </g>
+              <g transform="matrix(0.623022,0,0,0.630539,75.828143,1749.431503)">
+                <path d="M1511.811,1072.445L1511.811,1620.469C1511.811,1743.022 1411.113,1842.52 1287.081,1842.52L744.415,1842.52C620.383,1842.52 519.685,1743.022 519.685,1620.469L519.685,1072.445C519.685,949.891 620.383,850.394 744.415,850.394L1287.081,850.394C1411.113,850.394 1511.811,949.891 1511.811,1072.445Z" style="fill:url(#_Linear1)"/>
+              </g>
+            </g>
+            <defs>
+              <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(758.305747,749.265014,-758.305747,749.265014,636.595474,971.824186)">
+                <stop offset="0" style="stop-color:rgb(255,235,0);stop-opacity:1"/>
+                <stop offset="0.22" style="stop-color:rgb(247,45,0);stop-opacity:1"/>
+                <stop offset="0.38" style="stop-color:rgb(98,0,92);stop-opacity:1"/>
+                <stop offset="0.59" style="stop-color:rgb(0,29,149);stop-opacity:1"/>
+                <stop offset="0.78" style="stop-color:rgb(0,188,199);stop-opacity:1"/>
+                <stop offset="1" style="stop-color:rgb(3,255,0);stop-opacity:1"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <!-- Overlay input so iOS receives a direct tap rather than a programmatic .click() -->
+          <input type="color" id="bg-color" value="#ffffff" class="color-picker-overlay" tabindex="-1" aria-hidden="true" />
+        </button>
+
+        <button class="ctrl-btn" id="refresh" aria-label="Shuffle letter shapes">
+          <img class="na-icon" src="./buttons/NA.svg" alt="" aria-hidden="true" />
+          <svg viewBox="0 0 991 1003" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
+            <g transform="translate(-213.303806,-780.23294)">
+              <g transform="matrix(0.952381,0,0,0.963873,-258.71766,-16.521504)">
+                <path d="M1511.811,1095.468L1511.811,1597.445C1511.811,1732.706 1400.672,1842.52 1263.78,1842.52L767.717,1842.52C630.824,1842.52 519.685,1732.706 519.685,1597.445L519.685,1095.468C519.685,960.208 630.824,850.394 767.717,850.394L1263.78,850.394C1400.672,850.394 1511.811,960.208 1511.811,1095.468Z" style="fill:none;stroke:currentColor;stroke-width:47.84px"/>
+              </g>
+              <g transform="translate(-282.759383,29.322584)">
+                <g transform="matrix(1,0,0,-1,-71.571522,2609.881283)">
+                  <path d="M1050.191,1289.108L963.53,1167.782C959.228,1161.76 952.283,1158.186 944.882,1158.186L708.661,1158.186C696.013,1158.186 685.745,1168.454 685.745,1181.102C685.745,1193.75 696.013,1204.019 708.661,1204.019L933.089,1204.019L1022.029,1328.535L1050.191,1289.108ZM1075.793,1403.806L1162.454,1525.131C1166.756,1531.153 1173.701,1534.728 1181.102,1534.728L1361.997,1534.728L1306.63,1590.095C1297.687,1599.038 1297.687,1613.56 1306.63,1622.504C1315.574,1631.447 1330.096,1631.447 1339.039,1622.504L1433.528,1528.016C1433.649,1527.895 1433.768,1527.773 1433.886,1527.649C1437.459,1523.916 1439.525,1519.272 1440.084,1514.485C1440.243,1513.129 1440.28,1511.765 1440.197,1510.41C1439.869,1505.02 1437.646,1499.725 1433.527,1495.606L1339.039,1401.118C1330.09,1392.169 1315.58,1392.169 1306.63,1401.118C1297.681,1410.068 1297.681,1424.578 1306.63,1433.527L1361.997,1488.894L1192.896,1488.894L1103.956,1364.378L1075.793,1403.806Z" style="fill:currentColor"/>
+                </g>
+                <g transform="translate(-71.571522,11.456087)">
+                  <path d="M708.661,1086.614L944.882,1086.614L1181.102,1417.323L1417.323,1417.323L1322.835,1322.835L1417.323,1417.323L1322.835,1511.811" style="fill:none;stroke:currentColor;stroke-width:45.83px"/>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </button>
+      </div>
+
+      <main>
+        <section class="content">
+          <div class="parent">
+            <div class="child header">
+              <h1>Corin Edwards</h1>
+            </div>
+            <div class="child welcome">
+              <h2>Interaction Designer</h2>  
+              <p>Hello I'm Corin and I design interactive & accesible things to make people smile.  </p>
+            </div>
+            <div class="appointments">
+                <h2>Recent appointments</h2>
+                <ul>
+                  <li>Expedia Group - Experience Designer (Native design systems, Partner Products) </li>
+                  <li>Smart Service Queensland (Queensland Government) - Senior UI/UX Designer</li>
+                  <li>One Stop Shop Strategy &amp; Implementation Office (Queensland Government) - Senior UI/UX Designer, </li>
+                  <li>State Library of Queensland - Interaction Designer</li>
+                </ul>
+            </div>
+            <div class="contributions">
+              <h2>Selected contributions</h2>
+                <ul>
+                  <li>Ability Inclusion Movement (AIM) Australian Chapter lead (Expedia Group)</li>
+                  <li>Accessibility Champion, Level 3 (Expedia Group)</li>
+                  <li>Skill Builders Native Capabilities (Learning sessions in Expedia group campuses in Chicago, Austin, Seattle, Gurgaon & London)</li>
+                  <li>User Interface Community of Practice Chair (Queensland Government)</li>
+                  <li>Disability Action Plan, Content Development Directorate representative (State Library of Queensland)</li>
+                  <li>Consistent User Experience advisory group (Queensland Government)</li>
+                  <li>Freeplay indepenedant Games Festival speaker</li>
+                  <li>Electorfringe Festival speaker &amp; panelist</li>
+                  <li>Otakulture exhibition artist</li>
+                  <li>Killa Chinchilla exhibition artist</li>
+                  <li><a href="https://www.amazon.com/1X1-Pixel-Based-Illustration-Design/dp/B0046LURFM">1x1</a> Vasava Artworks Barcelona contributing illustrator</li>
+                </ul>
+            </div>
+          </div>
+
+          
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

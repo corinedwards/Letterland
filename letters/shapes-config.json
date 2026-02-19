@@ -1,0 +1,145 @@
+{
+  "_readme": "Optional config for custom shapes. Only include shapes that need custom settings. Files auto-load from this folder using naming: LETTER-shapename.glb or LETTER-shapename.svg. Textures auto-match: LETTER-shapename.png",
+  "_scene": {
+    "spacing": 1.75,
+    "lineHeight": 3,
+    "mobileSpacing": 1.4,
+    "mobileLineHeight": 2.2,
+    "friction": 0.78,
+    "hoverToSpin": true,
+    "returnToRest": true,
+    "returnToRestSpeed": 0.01,
+    "cameraZ": 5.5,
+    "floating": {
+      "enabled": true,
+      "amplitude": {
+        "x": 0.04,
+        "y": 0.06,
+        "z": 0.05
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0.03
+      },
+      "speed": 1.0,
+      "speedVariation": 0.3
+    },
+    "darkModeEffects": {
+      "rgbShift": {
+        "enabled": true,
+        "maxShiftPixels": 3.0,
+        "animationSpeed": 0.016,
+        "blurIntensity": 0.2
+      },
+      "distortion": {
+        "enabled": true,
+        "triggerInterval": 4000,
+        "duration": 400,
+        "updateFPS": 12,
+        "smearWidth": 0.30,
+        "smearHeight": 0.30,
+        "segments": 4.8,
+        "intensityMultiplier": 4.0
+      }
+    }
+  },
+  "_defaults": {
+    "color": "#000",
+    "metalness": 0,
+    "roughness": 0,
+    "wireframe": false,
+    "emissive": "#000000",
+    "emissiveIntensity": 0,
+    "extrudeDepth": 10,
+    "bevelThickness": 0,
+    "bevelSize": 0,
+    "textureFlipY": false,
+    "textureFilter": "nearest",
+    "rotationX": 3.14159,
+    "rotationY": 0,
+    "rotationZ": 0
+  },
+  "C-ComputerSpace, C-CyberLip, O-Dreamcast, R-YagiSega, I-CaliforniaGames, N-Pong" : {
+      "color": "#FFDF00",
+      "emissive": "#FFD639",
+      "emissiveIntensity": 0.4,
+      "extrudeDepth": 24
+  },
+  "C-Raver, R-Raver, I-Raver, N-Raver": {
+    "color": "#862AFE",
+    "emissive": "#2AFE59",
+    "emissiveIntensity": 0.8,
+    "extrudeDepth": 36,
+    "color": "#ff6600",
+    "metalness": 0,
+    "roughness": 0.3
+  },
+  "C-Ooze, O-Ooze, R-Ooze, I-Ooze, N-Ooze" : {
+    "color": "#ff6251",
+    "emissive": "#ff8647",
+    "emissiveIntensity": 0.4
+  },
+  "C-Chunky, O-Chunky, O-3D, O-Moon, R-3D, R-Chunky, I-Chunky, N-Chunky" : {
+    "color": "#ffffff",
+    "extrudeDepth": 36,
+    "metalness": 0,
+    "roughness": 0.9,
+    "emissive": "#ffffff",
+    "emissiveIntensity": 1,
+    "edges": true,
+    "edgeColor": "#003882",
+    "edgeColor": "#0311a1"
+  },
+  "C-RCA2" :{
+     "texture": "C-RCA2.png",
+     "roughness": 0.8,
+     "3dapp": "blockbench"
+  },
+  "O-Moon": {
+    "scale": 1.4
+  },
+  "O-Diskette": {
+    "3dapp": "blender",
+    "texture": "O-Diskette.png",
+    "scale": 0.8,
+    "rotationX": 0,
+    "rotationY": 0,
+    "rotationZ": 0,
+    "emissiveIntensity": 1.1
+  },
+  "O-Archive, I-PaulFranck":{
+    "color": "#a19a7a",
+    "extrudeDepth": 10,
+    "edges": true,
+    "edgeColor": "#c2b165",
+    "metalness": 0.7,
+    "roughness": 0
+    },
+  "R-3D":{
+    "scale": 1.4
+  },
+  "N-Diagram":{
+    "color": "#8db3da",
+    "color": "#00ddff",
+    "extrudeDepth": 18,
+    "metalness": 0.4,
+    "edges": true,
+    "edgeColor": "#5cfaff"
+  },
+  "N-Giraffe":{
+    "emissiveIntensity": 8.4,
+    "emissive": "#ffe100",
+    "rotationX": 0,
+    "rotationY": 0,
+    "rotationZ": 0,
+    "roughness": 1,
+    "textureFilter": "nearest",
+    "texture": "N-Giraffe.png"
+  },
+    "N-GrfGlitch":{
+    "3dapp": "blockbench",
+    "texture": "N-GiraffeNatural.png",
+    "emissiveIntensity": 0.7
+  }
+}
