@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/corinedw/public_html/beta/
+    - /bin/cp -R * $DEPLOYPATH

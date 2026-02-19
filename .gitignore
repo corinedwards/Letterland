@@ -33,6 +33,7 @@ dist-ssr
 # Build files
 build/
 .cache/
+corin-portfolio-build.zip
 
 # Environment files
 .env

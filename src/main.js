@@ -104,6 +104,9 @@ darkModeBtn.addEventListener('click', () => {
   updateNAStates()
 })
 
+// Keyboard fallback — programmatic .click() works on desktop but not iOS;
+// the overlay <input> inside the button handles iOS direct taps.
+bgColorBtn.addEventListener('click', () => bgColorPicker.click())
 
 function updateNAStates() {
   const paused = pauseMotionBtn.getAttribute('aria-pressed') === 'true'
