@@ -7,6 +7,7 @@ Holding Ctrl, Cmd, or Alt disables them so browser shortcuts still work normally
 
 | Key | Action |
 |-----|--------|
+| `?` | Show this shortcuts panel |
 | `s` | Shuffle letter shapes |
 | `d` | Toggle dark mode |
 | `b` | Cycle background colour (forward) |

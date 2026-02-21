@@ -70,6 +70,7 @@ const bgColorBtn = document.getElementById('bg-color-btn')
 const freeColorBtn = document.getElementById('free-color-btn')
 const freeColorPicker = document.getElementById('free-color-picker')
 const bgColorLabel = document.getElementById('bg-color-label')
+const helpBtn = document.getElementById('help-btn')
 
 // Restore settings from localStorage
 const savedBgColor = localStorage.getItem('bgColor') || bgColors[0]
@@ -150,13 +151,27 @@ function setButtonNA(btn, isNA) {
   if (btn === freeColorBtn) freeColorPicker.disabled = isNA
 }
 
+// Keyboard shortcuts help dialog
+const shortcutsDialog = document.getElementById('shortcuts-help')
+helpBtn.addEventListener('click', () => shortcutsDialog.showModal())
+// Click the backdrop (outside the dialog box) to close
+shortcutsDialog.addEventListener('click', (e) => {
+  if (e.target === shortcutsDialog) shortcutsDialog.close()
+})
+
 // Keyboard shortcuts (WCAG 2.1.4 compliant — only fire when no interactive element has focus)
 window.addEventListener('keydown', (e) => {
-  // Skip if a form element or button has focus (lets assistive tech & forms work normally)
+  if (e.metaKey || e.ctrlKey || e.altKey) return
+
+  // ? always opens help regardless of focus state
+  if (e.key === '?') {
+    shortcutsDialog.showModal()
+    return
+  }
+
+  // All other shortcuts: skip if a form element or button has focus
   const tag = document.activeElement?.tagName
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON') return
-  // Skip if any modifier key is held (avoid clashing with browser/OS shortcuts)
-  if (e.metaKey || e.ctrlKey || e.altKey) return
 
   switch (e.key) {
     case 's': refreshBtn.click(); break

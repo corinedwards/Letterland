@@ -116,6 +116,18 @@
           </svg>
         </button>
 
+        <button class="ctrl-btn" id="help-btn" aria-label="Keyboard shortcuts" aria-keyshortcuts="?">
+          <svg viewBox="0 0 991 1003" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
+            <g transform="translate(-1394.406168,-449.524278)">
+              <g transform="matrix(0.952381,0,0,0.963873,922.384702,-347.230166)">
+                <path d="M1511.811,1095.468L1511.811,1597.445C1511.811,1732.706 1400.672,1842.52 1263.78,1842.52L767.717,1842.52C630.824,1842.52 519.685,1732.706 519.685,1597.445L519.685,1095.468C519.685,960.208 630.824,850.394 767.717,850.394L1263.78,850.394C1400.672,850.394 1511.811,960.208 1511.811,1095.468Z" style="fill:none;stroke:currentColor;stroke-width:47.84px"/>
+              </g>
+              <path d="M1748.031,826.772C1748.031,708.661 1889.764,708.661 1889.764,708.661C1889.764,708.661 2031.496,708.661 2031.496,826.772C2031.496,944.882 1889.764,944.882 1889.764,944.882L1889.764,1086.614" style="fill:none;stroke:currentColor;stroke-width:45.83px"/>
+              <path d="M1889.764,1181.102L1889.764,1228.346" style="fill:none;stroke:currentColor;stroke-width:45.83px"/>
+            </g>
+          </svg>
+        </button>
+
       </div>
       <main>
         <section class="content">
@@ -158,6 +170,21 @@
         </section>
       </main>
     </div>
+    <dialog id="shortcuts-help" aria-labelledby="shortcuts-title">
+      <h2 id="shortcuts-title">Keyboard shortcuts</h2>
+      <table>
+        <tbody>
+          <tr><td><kbd>s</kbd></td><td>Shuffle</td></tr>
+          <tr><td><kbd>d</kbd></td><td>Dark mode</td></tr>
+          <tr><td><kbd>b</kbd> / <kbd>B</kbd></td><td>Background colour forward / back</td></tr>
+          <tr><td><kbd>f</kbd></td><td>Free colour picker</td></tr>
+          <tr><td><kbd>p</kbd></td><td>Pause motion</td></tr>
+          <tr><td><kbd>C</kbd> <kbd>O</kbd> <kbd>R</kbd> <kbd>I</kbd> <kbd>N</kbd></td><td>Spin that letter</td></tr>
+          <tr><td><kbd>?</kbd></td><td>This panel</td></tr>
+        </tbody>
+      </table>
+      <form method="dialog"><button type="submit">Close</button></form>
+    </dialog>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

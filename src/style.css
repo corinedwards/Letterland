@@ -252,6 +252,15 @@ body.dark-mode .ctrl-btn:focus-visible {
 }
 
   
+/* Keyboard shortcuts help dialog — override global mix-blend-mode so text is readable */
+#shortcuts-help h2,
+#shortcuts-help p,
+#shortcuts-help li,
+#shortcuts-help td {
+  mix-blend-mode: normal;
+  color: initial;
+}
+
 /* Mobile layout */
 @media (max-width: 768px) {
   #three-container {
