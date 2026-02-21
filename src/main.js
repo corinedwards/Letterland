@@ -67,6 +67,8 @@ const refreshBtn = document.getElementById('refresh')
 const pauseMotionBtn = document.getElementById('pause-motion')
 const darkModeBtn = document.getElementById('dark-mode')
 const bgColorBtn = document.getElementById('bg-color-btn')
+const freeColorBtn = document.getElementById('free-color-btn')
+const freeColorPicker = document.getElementById('free-color-picker')
 const bgColorLabel = document.getElementById('bg-color-label')
 
 // Restore settings from localStorage
@@ -113,10 +115,20 @@ darkModeBtn.addEventListener('click', () => {
   updateNAStates()
 })
 
-// Background colour — cycle through presets
-bgColorBtn.addEventListener('click', () => {
-  bgColorIndex = (bgColorIndex + 1) % bgColors.length
+// Background colour — cycle through presets (shift-click to go backwards)
+bgColorBtn.addEventListener('click', (e) => {
+  bgColorIndex = (bgColorIndex + (e.shiftKey ? -1 : 1) + bgColors.length) % bgColors.length
   const color = bgColors[bgColorIndex]
+  localStorage.setItem('bgColor', color)
+  scene.setBackgroundColor(color)
+  document.body.style.backgroundColor = color
+  bgColorLabel.textContent = color.toUpperCase()
+})
+
+// Free colour picker
+freeColorBtn.addEventListener('click', () => freeColorPicker.click())
+freeColorPicker.addEventListener('input', (e) => {
+  const color = e.target.value
   localStorage.setItem('bgColor', color)
   scene.setBackgroundColor(color)
   document.body.style.backgroundColor = color
@@ -128,12 +140,14 @@ function updateNAStates() {
   const darkMode = darkModeBtn.getAttribute('aria-pressed') === 'true'
   setButtonNA(darkModeBtn, paused)
   setButtonNA(bgColorBtn, paused || darkMode)
+  setButtonNA(freeColorBtn, paused || darkMode)
   setButtonNA(refreshBtn, paused)
 }
 
 function setButtonNA(btn, isNA) {
   btn.classList.toggle('is-na', isNA)
   btn.disabled = isNA
+  if (btn === freeColorBtn) freeColorPicker.disabled = isNA
 }
 
 // Handle window resize
