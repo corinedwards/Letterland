@@ -667,6 +667,12 @@ export class ThreeScene {
     this.letterManager.setDarkMode(this.darkMode || false)
   }
   
+  spinLetter(name) {
+    const letter = this.letterManager.letterObjects.find(obj => obj.name === name.toUpperCase())
+    if (!letter) return
+    letter.hoverVelocity = this.settings.demoSpin?.keyboardSpinVelocity ?? 0.4
+  }
+
   cancelDemo() {
     this.userHasInteracted = true
     this.demoTimeouts.forEach(t => clearTimeout(t))

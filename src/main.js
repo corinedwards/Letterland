@@ -150,6 +150,29 @@ function setButtonNA(btn, isNA) {
   if (btn === freeColorBtn) freeColorPicker.disabled = isNA
 }
 
+// Keyboard shortcuts (WCAG 2.1.4 compliant — only fire when no interactive element has focus)
+window.addEventListener('keydown', (e) => {
+  // Skip if a form element or button has focus (lets assistive tech & forms work normally)
+  const tag = document.activeElement?.tagName
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON') return
+  // Skip if any modifier key is held (avoid clashing with browser/OS shortcuts)
+  if (e.metaKey || e.ctrlKey || e.altKey) return
+
+  switch (e.key) {
+    case 's': refreshBtn.click(); break
+    case 'd': darkModeBtn.click(); break
+    case 'b': bgColorBtn.click(); break
+    case 'B': bgColorBtn.dispatchEvent(new MouseEvent('click', { shiftKey: true })); break
+    case 'f': freeColorBtn.click(); break
+    case 'p': pauseMotionBtn.click(); break
+    case 'c': case 'C': scene.spinLetter('C'); break
+    case 'o': case 'O': scene.spinLetter('O'); break
+    case 'r': case 'R': scene.spinLetter('R'); break
+    case 'i': case 'I': scene.spinLetter('I'); break
+    case 'n': case 'N': scene.spinLetter('N'); break
+  }
+})
+
 // Handle window resize
 window.addEventListener('resize', () => {
   scene.onResize()

@@ -45,14 +45,15 @@
       "#180840",
       "#D0B0F8",
       "#300838",
-      "#FFA300"
+      "#F2C87C"
     ],
     "demoSpin": {
       "delay": 4000,
       "scratchVelocity": 0.12,
       "scratchDuration": 300,
       "scratchGap": 400,
-      "spinVelocity": 0.9
+      "spinVelocity": 0.9,
+      "keyboardSpinVelocity": 0.4
     },
     "darkModeEffects": {
       "rgbShift": {
