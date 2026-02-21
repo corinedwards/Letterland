@@ -30,3 +30,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: deploy
+
+      - name: Trigger cPanel pull and deploy
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" \
+            -H "Authorization: cpanel corinedw:${{ secrets.CPANEL_TOKEN }}" \
+            "https://vmcp20.web-servers.com.au:2083/execute/VersionControl/update?repository_root=/home/corinedw/repositories/Letterland"
