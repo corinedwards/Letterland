@@ -92,7 +92,7 @@
     "edgeColor": "#0311a1"
   },
   "C-Cactus" :{
-     "texture": "C-CactusEdit.png",
+     "texture": "C-Cactus.png",
      "roughness": 0.8,
      "3dapp": "blockbench"
   },
