@@ -44,36 +44,45 @@ async function initApp() {
       if (overlay) {
         overlay.classList.add('hidden')
         // Remove from DOM after transition
-        setTimeout(() => overlay.remove(), 400)
+        setTimeout(() => {
+        overlay.remove()
+        scene.runDemoSpin()
+      }, 400)
       }
       document.body.classList.add('loaded')
     })
   })
   
-  return { scene }
+  const bgColors = sceneSettings.bgColors || ['#ffffff']
+  return { scene, bgColors }
 }
 
 // Start the app
 const app = await initApp()
 const scene = app.scene
+const bgColors = app.bgColors
 
 // Control buttons
 const refreshBtn = document.getElementById('refresh')
 const pauseMotionBtn = document.getElementById('pause-motion')
 const darkModeBtn = document.getElementById('dark-mode')
 const bgColorBtn = document.getElementById('bg-color-btn')
-const bgColorPicker = document.getElementById('bg-color')
+const bgColorLabel = document.getElementById('bg-color-label')
 
 // Restore settings from localStorage
-const bgColor = localStorage.getItem('bgColor') || '#ffffff'
+const savedBgColor = localStorage.getItem('bgColor') || bgColors[0]
 const isPaused = localStorage.getItem('isPaused') === 'true'
 const isDarkMode = localStorage.getItem('isDarkMode') === 'true'
 
-bgColorPicker.value = bgColor
+// Find saved colour in the preset list, defaulting to 0
+let bgColorIndex = bgColors.findIndex(c => c.toLowerCase() === savedBgColor.toLowerCase())
+if (bgColorIndex === -1) bgColorIndex = 0
+
 pauseMotionBtn.setAttribute('aria-pressed', String(isPaused))
 darkModeBtn.setAttribute('aria-pressed', String(isDarkMode))
 
-scene.setBackgroundColor(bgColor)
+scene.setBackgroundColor(bgColors[bgColorIndex])
+bgColorLabel.textContent = bgColors[bgColorIndex].toUpperCase()
 scene.setPaused(isPaused)
 scene.setDarkMode(isDarkMode)
 
@@ -104,9 +113,15 @@ darkModeBtn.addEventListener('click', () => {
   updateNAStates()
 })
 
-// Keyboard fallback — programmatic .click() works on desktop but not iOS;
-// the overlay <input> inside the button handles iOS direct taps.
-bgColorBtn.addEventListener('click', () => bgColorPicker.click())
+// Background colour — cycle through presets
+bgColorBtn.addEventListener('click', () => {
+  bgColorIndex = (bgColorIndex + 1) % bgColors.length
+  const color = bgColors[bgColorIndex]
+  localStorage.setItem('bgColor', color)
+  scene.setBackgroundColor(color)
+  document.body.style.backgroundColor = color
+  bgColorLabel.textContent = color.toUpperCase()
+})
 
 function updateNAStates() {
   const paused = pauseMotionBtn.getAttribute('aria-pressed') === 'true'
@@ -119,17 +134,7 @@ function updateNAStates() {
 function setButtonNA(btn, isNA) {
   btn.classList.toggle('is-na', isNA)
   btn.disabled = isNA
-  if (btn === bgColorBtn) {
-    bgColorPicker.disabled = isNA
-  }
 }
-
-bgColorPicker.addEventListener('input', (e) => {
-  const color = e.target.value
-  localStorage.setItem('bgColor', color)
-  scene.setBackgroundColor(color)
-  document.body.style.backgroundColor = color
-})
 
 // Handle window resize
 window.addEventListener('resize', () => {

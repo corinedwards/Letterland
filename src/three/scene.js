@@ -28,6 +28,13 @@ export class ThreeScene {
         speed: 1.0,
         speedVariation: 0.3
       },
+      demoSpin: sceneSettings.demoSpin || {
+        delay: 4000,
+        scratchVelocity: 0.08,
+        scratchDuration: 300,
+        scratchGap: 400,
+        spinVelocity: 0.9
+      },
       darkModeEffects: sceneSettings.darkModeEffects || {
         rgbShift: {
           enabled: true,
@@ -308,10 +315,12 @@ export class ThreeScene {
     this.affectedLetters = new Set()
     this.paused = false
     this.darkMode = false
-    
+    this.userHasInteracted = false
+    this.demoTimeouts = []
+
     // RGB shift animation
     this.rgbShiftTime = 0
-    
+
     this.setupMouseControls()
   }
   
@@ -429,8 +438,9 @@ export class ThreeScene {
   }
   
   onTouchStart(event) {
+    this.cancelDemo()
     const touch = event.touches[0]
-    
+
     // Store initial touch position
     this.touchStartX = touch.clientX
     this.touchStartY = touch.clientY
@@ -497,7 +507,8 @@ export class ThreeScene {
   
   onMouseDown(event) {
     if (this.hoverMode) return // Don't handle clicks in hover mode
-    
+    this.cancelDemo()
+
     const letter = this.checkHover(event)
     
     if (letter) {
@@ -656,6 +667,47 @@ export class ThreeScene {
     this.letterManager.setDarkMode(this.darkMode || false)
   }
   
+  cancelDemo() {
+    this.userHasInteracted = true
+    this.demoTimeouts.forEach(t => clearTimeout(t))
+    this.demoTimeouts = []
+  }
+
+  runDemoSpin() {
+    if (this.paused || this.userHasInteracted) return
+    const { delay, scratchVelocity, scratchDuration, scratchGap, spinVelocity } = this.settings.demoSpin
+
+    // Animate a single scratch with sine easing (0 → peak → 0 over scratchDuration ms)
+    const animateScratch = (direction, rLetter) => {
+      const peak = scratchVelocity * direction
+      const startTime = performance.now()
+      const frame = (now) => {
+        if (this.userHasInteracted) return
+        const t = Math.min((now - startTime) / scratchDuration, 1)
+        rLetter.hoverVelocity = peak * Math.sin(t * Math.PI)
+        rLetter.shouldReturnToOrigin = false
+        if (t < 1) requestAnimationFrame(frame)
+      }
+      requestAnimationFrame(frame)
+    }
+
+    const start = () => {
+      if (this.userHasInteracted) return
+      const rLetter = this.letterManager.letterObjects.find(obj => obj.name === 'R')
+      if (!rLetter) return
+
+      animateScratch(-1, rLetter)
+      this.demoTimeouts.push(setTimeout(() => animateScratch(+1, rLetter), scratchGap))
+      this.demoTimeouts.push(setTimeout(() => animateScratch(-1, rLetter), scratchGap * 2))
+      this.demoTimeouts.push(setTimeout(() => {
+        if (this.userHasInteracted) return
+        rLetter.hoverVelocity = spinVelocity // big fast spin — returnToRest kicks in naturally after
+      }, scratchGap * 3))
+    }
+
+    this.demoTimeouts.push(setTimeout(start, delay))
+  }
+
   dispose() {
     // Clean up event listener
     window.removeEventListener('resize', this.handleResize)

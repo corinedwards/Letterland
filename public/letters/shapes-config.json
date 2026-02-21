@@ -22,8 +22,33 @@
         "y": 0,
         "z": 0.03
       },
-      "speed": 1.0,
-      "speedVariation": 0.3
+      "speed": 2.0,
+      "speedVariation": 0.6
+    },
+    "bgColors": [
+      "#B5F2FF",
+      "#CAE4FF",
+      "#F8B0C8",
+      "#F8C8B0",
+      "#F07020",
+      "#201808",
+      "#F8F0A8",
+      "#F5D800",
+      "#202008",
+      "#B0F8C8",
+      "#A8F0F8",
+      "#083838",
+      "#2030C0",
+      "#180840",
+      "#D0B0F8",
+      "#300838"
+    ],
+    "demoSpin": {
+      "delay": 4000,
+      "scratchVelocity": 0.12,
+      "scratchDuration": 300,
+      "scratchGap": 400,
+      "spinVelocity": 0.9
     },
     "darkModeEffects": {
       "rgbShift": {
