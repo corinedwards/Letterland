@@ -240,9 +240,12 @@ body.dark-mode .ctrl-btn:focus-visible {
   }
   .parent h2{
     font-size:medium;
-    font-weight: 400;
+    font-weight: 700;
     padding-bottom:1em;
+  }
 
+  .parent h2+ul, .parent h2+p {
+    padding-bottom:2em;
   }
 
 
