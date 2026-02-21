@@ -66,7 +66,7 @@
       "emissiveIntensity": 0.4,
       "extrudeDepth": 24
   },
-  "C-Raver, R-Raver, I-Raver, N-Raver": {
+  "C-Raverwave, R-Raverwave, I-Raverwave, N-Raverwave": {
     "color": "#862AFE",
     "emissive": "#2AFE59",
     "emissiveIntensity": 0.8,
@@ -91,8 +91,8 @@
     "edgeColor": "#003882",
     "edgeColor": "#0311a1"
   },
-  "C-RCA2" :{
-     "texture": "C-RCA2.png",
+  "C-Cactus" :{
+     "texture": "C-CactusEdit.png",
      "roughness": 0.8,
      "3dapp": "blockbench"
   },
