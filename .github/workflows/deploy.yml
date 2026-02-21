@@ -21,9 +21,6 @@ jobs:
 
       - run: npm run build
 
-      - name: Include cPanel deployment config
-        run: cp .cpanel.yml dist/.cpanel.yml
-
       - name: Deploy to deploy branch
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -31,8 +28,11 @@ jobs:
           publish_dir: ./dist
           publish_branch: deploy
 
-      - name: Trigger cPanel pull and deploy
-        run: |
-          curl -s -o /dev/null -w "%{http_code}" \
-            -H "Authorization: cpanel corinedw:${{ secrets.CPANEL_TOKEN }}" \
-            "https://vmcp20.web-servers.com.au:2083/execute/VersionControl/update?repository_root=/home/corinedw/repositories/Letterland"
+      - name: FTP deploy to cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: public_html/beta/
