@@ -64,14 +64,15 @@ export class ThreeScene {
     this.scene = new THREE.Scene()
     this.scene.background = new THREE.Color(0xffffff)
 
-    // Camera setup
+    // Camera setup — 50° telephoto FOV for desktop, 75° for mobile
+    const isMobileInit = this.container.clientWidth < 768
     this.camera = new THREE.PerspectiveCamera(
-      75,
+      isMobileInit ? 75 : 50,
       this.container.clientWidth / this.container.clientHeight,
       0.1,
       1000
     )
-    this.camera.position.z = this.settings.cameraZ
+    this.camera.position.z = isMobileInit ? this.settings.cameraZ : this.computeDesktopCameraZ()
 
     // Renderer setup
     this.renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -286,6 +287,12 @@ export class ThreeScene {
     directionalLight2.position.set(-5, -5, 5)
     this.scene.add(directionalLight2)
 
+    // Debug grid — 20×20 units, 1-unit cells, in the XY plane behind the letters
+    this.debugGrid = new THREE.GridHelper(20, 20, 0x888888, 0x888888)
+    this.debugGrid.rotation.x = Math.PI / 2
+    this.debugGrid.position.z = -3
+    this.scene.add(this.debugGrid)
+
     // Initialize letter manager with pre-configured shape factory
     this.letterManager = new LetterManager(this.scene, this.shapeFactory, this.settings.returnToRest, this.settings.returnToRestSpeed, this.settings.floating)
     this.letterManager.createLetters()
@@ -293,9 +300,16 @@ export class ThreeScene {
     // Apply spacing settings from config after letters are created
     this.updateLetterSpacing(this.settings.spacing, this.settings.lineHeight)
     
-    // Window resize handler
+    // Resize handler — observes the container directly so CSS height changes
+    // (e.g. via HMR or media queries) are picked up without a window resize event.
+    // Debounced so rapid-fire events during drag-resize don't cause flickering.
     this.handleResize = this.handleResize.bind(this)
-    window.addEventListener('resize', this.handleResize)
+    let _resizeTimer = null
+    this.resizeObserver = new ResizeObserver(() => {
+      clearTimeout(_resizeTimer)
+      _resizeTimer = setTimeout(() => this.handleResize(), 50)
+    })
+    this.resizeObserver.observe(this.container)
     
     // Mouse interaction setup
     this.raycaster = new THREE.Raycaster()
@@ -345,9 +359,23 @@ export class ThreeScene {
 
     this.setupMouseControls()
   }
-  
+
+  // Compute desktop camera Z to fit the letter array at ~90% of the frustum width.
+  // Uses 50° FOV (telephoto) — less perspective distortion than 75°.
+  // Minimum 3.5 keeps the camera from getting too close.
+  computeDesktopCameraZ() {
+    const fovRad = 50 * Math.PI / 180
+    const aspect = this.container.clientWidth / this.container.clientHeight
+    const letterArrayWidth = this.settings.spacing * 4 + 2
+    const z = letterArrayWidth / (0.90 * 2 * Math.tan(fovRad / 2) * aspect)
+    return Math.max(3.5, z)
+  }
+
   handleResize() {
     // Update camera
+    const isMobile = this.container.clientWidth < 768
+    this.camera.fov = isMobile ? 75 : 50
+    this.camera.position.z = isMobile ? this.settings.cameraZ : this.computeDesktopCameraZ()
     this.camera.aspect = this.container.clientWidth / this.container.clientHeight
     this.camera.updateProjectionMatrix()
     
@@ -627,6 +655,8 @@ export class ThreeScene {
   }
 
   onResize() {
+    const isMobile = this.container.clientWidth < 768
+    this.camera.position.z = isMobile ? this.settings.cameraZ : this.computeDesktopCameraZ()
     this.camera.aspect = this.container.clientWidth / this.container.clientHeight
     this.camera.updateProjectionMatrix()
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
@@ -1056,8 +1086,8 @@ export class ThreeScene {
   }
 
   dispose() {
-    // Clean up event listener
-    window.removeEventListener('resize', this.handleResize)
+    // Clean up resize observer
+    if (this.resizeObserver) this.resizeObserver.disconnect()
     
     // Clean up renderer
     if (this.renderer) {

@@ -158,11 +158,6 @@ window.addEventListener('keydown', (e) => {
   }
 })
 
-// Handle window resize
-window.addEventListener('resize', () => {
-  scene.onResize()
-})
-
 // Animation loop
 function animate() {
   requestAnimationFrame(animate)
