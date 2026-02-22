@@ -45,7 +45,8 @@
       "#180840",
       "#D0B0F8",
       "#300838",
-      "#F2C87C"
+      "#F2C87C",
+      "#FFFF00"
     ],
     "demoSpin": {
       "delay": 4000,
@@ -54,6 +55,23 @@
       "scratchGap": 400,
       "spinVelocity": 0.9,
       "keyboardSpinVelocity": 0.4
+    },
+    "demoSpinOverlay": {
+      "radius": 1.15,
+      "tickLength": 0.20,
+      "tickDensity": 62,
+      "needleSpeed": 0.20,
+      "orbitXRotation": -55,
+      "orbitYRotation": -46,
+      "lineColor": "#ffffff",
+      "glowColor": "#ffffff",
+      "ringFadeInOffset": -600,
+      "ringFadeInLength": 500,
+      "ringFadeOutOffset": 400,
+      "ringFadeOutLength": 1400,
+      "needleFadeInLength": 250,
+      "needleFadeOutOffset": 550,
+      "needleFadeOutLength": 50
     },
     "darkModeEffects": {
       "rgbShift": {
@@ -127,7 +145,7 @@
      "3dapp": "blockbench"
   },
   "O-Moon": {
-    "scale": 1.4
+    "scale": 1
   },
   "O-Diskette": {
     "3dapp": "blender",
