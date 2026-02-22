@@ -67,10 +67,7 @@ const refreshBtn = document.getElementById('refresh')
 const pauseMotionBtn = document.getElementById('pause-motion')
 const darkModeBtn = document.getElementById('dark-mode')
 const bgColorBtn = document.getElementById('bg-color-btn')
-const freeColorBtn = document.getElementById('free-color-btn')
-const freeColorPicker = document.getElementById('free-color-picker')
 const bgColorLabel = document.getElementById('bg-color-label')
-const helpBtn = document.getElementById('help-btn')
 
 // Restore settings from localStorage
 const savedBgColor = localStorage.getItem('bgColor') || bgColors[0]
@@ -126,50 +123,24 @@ bgColorBtn.addEventListener('click', (e) => {
   bgColorLabel.textContent = color.toUpperCase()
 })
 
-// Free colour picker
-freeColorBtn.addEventListener('click', () => freeColorPicker.click())
-freeColorPicker.addEventListener('input', (e) => {
-  const color = e.target.value
-  localStorage.setItem('bgColor', color)
-  scene.setBackgroundColor(color)
-  document.body.style.backgroundColor = color
-  bgColorLabel.textContent = color.toUpperCase()
-})
-
 function updateNAStates() {
   const paused = pauseMotionBtn.getAttribute('aria-pressed') === 'true'
   const darkMode = darkModeBtn.getAttribute('aria-pressed') === 'true'
   setButtonNA(darkModeBtn, paused)
   setButtonNA(bgColorBtn, paused || darkMode)
-  setButtonNA(freeColorBtn, paused || darkMode)
   setButtonNA(refreshBtn, paused)
 }
 
 function setButtonNA(btn, isNA) {
   btn.classList.toggle('is-na', isNA)
   btn.disabled = isNA
-  if (btn === freeColorBtn) freeColorPicker.disabled = isNA
 }
-
-// Keyboard shortcuts help dialog
-const shortcutsDialog = document.getElementById('shortcuts-help')
-helpBtn.addEventListener('click', () => shortcutsDialog.showModal())
-// Click the backdrop (outside the dialog box) to close
-shortcutsDialog.addEventListener('click', (e) => {
-  if (e.target === shortcutsDialog) shortcutsDialog.close()
-})
 
 // Keyboard shortcuts (WCAG 2.1.4 compliant — only fire when no interactive element has focus)
 window.addEventListener('keydown', (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return
 
-  // ? always opens help regardless of focus state
-  if (e.key === '?') {
-    shortcutsDialog.showModal()
-    return
-  }
-
-  // All other shortcuts: skip if a form element or button has focus
+  // Skip if a form element or button has focus
   const tag = document.activeElement?.tagName
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON') return
 
@@ -178,7 +149,6 @@ window.addEventListener('keydown', (e) => {
     case 'd': darkModeBtn.click(); break
     case 'b': bgColorBtn.click(); break
     case 'B': bgColorBtn.dispatchEvent(new MouseEvent('click', { shiftKey: true })); break
-    case 'f': freeColorBtn.click(); break
     case 'p': pauseMotionBtn.click(); break
     case 'c': case 'C': scene.spinLetter('C'); break
     case 'o': case 'O': scene.spinLetter('O'); break

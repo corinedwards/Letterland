@@ -1,6 +1,6 @@
 /* Button tap animation tuning */
 :root {
-  --btn-tap-scale: 0.75;
+  --btn-tap-scale: 0.85;
 }
 
 * {
@@ -58,6 +58,44 @@ a:link{
 a:visited{
   color:lightpink;
   mix-blend-mode: difference;
+}
+
+table{
+  border: Solid 1px #fff;
+  mix-blend-mode: difference;
+  padding:1em;
+   border-radius: 8px; 
+   margin-bottom:1em;
+   font-size:10pt;
+}
+
+td{
+  /* padding: 0.4lvw 0.4lvw 0.4lvw 0; */
+  /* border: Solid 1px #fff; */
+  color:#fff;
+  mix-blend-mode: difference;
+  padding:0 1em 0 0;
+}
+
+.keyboard{
+  /* border:solid 1px;  */
+  border-radius: 8px; 
+  display:inline-block;
+  width: 32px;
+  height:32px;
+  text-align: center;
+  vertical-align: middle;
+  font-size:8pt;
+  background:#111;
+}
+
+.pill {
+  border:solid 1px; 
+  border-radius: 8px; 
+  display:inline-block;
+  text-align: left;
+  vertical-align: middle;
+  padding:0.2lvh 0.4lvh;
 }
 
 #app {
@@ -254,15 +292,6 @@ body.dark-mode .ctrl-btn:focus-visible {
 }
 
   
-/* Keyboard shortcuts help dialog — override global mix-blend-mode so text is readable */
-#shortcuts-help h2,
-#shortcuts-help p,
-#shortcuts-help li,
-#shortcuts-help td {
-  mix-blend-mode: normal;
-  color: initial;
-}
-
 /* Mobile layout */
 @media (max-width: 768px) {
   #three-container {

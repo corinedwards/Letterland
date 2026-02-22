@@ -35,6 +35,7 @@ export class ThreeScene {
         scratchGap: 400,
         spinVelocity: 0.9
       },
+      demoSpinOverlay: sceneSettings.demoSpinOverlay || {},
       darkModeEffects: sceneSettings.darkModeEffects || {
         rgbShift: {
           enabled: true,
@@ -317,6 +318,27 @@ export class ThreeScene {
     this.darkMode = false
     this.userHasInteracted = false
     this.demoTimeouts = []
+    this.demoSpinOverlay = null
+    const oc = this.settings.demoSpinOverlay
+    this.demoSpinOverlayRadius       = oc.radius        ?? 0.75
+    this.demoSpinOverlayTickHalf     = (oc.tickLength   ?? 0.48) / 2
+    this.demoSpinOverlayTickN        = oc.tickDensity   ?? 60
+    this.demoSpinOverlayLineColor    = oc.lineColor     ?? '#ff1493'
+    this.demoSpinOverlayGlowColor    = oc.glowColor     ?? '#ff1493'
+    this.demoSpinOverlayXRotation    = oc.orbitXRotation ?? 96
+    this.demoSpinOverlayYRotation    = (oc.orbitYRotation ?? 0) * Math.PI / 180
+    this.demoSpinOverlayNeedleSpeed  = oc.needleSpeed   ?? 0.5
+    this.demoRingFadeInOffset  = oc.ringFadeInOffset  ?? -600
+    this.demoRingFadeInLength  = oc.ringFadeInLength  ?? 500
+    this.demoRingFadeOutOffset = oc.ringFadeOutOffset ?? 1500
+    this.demoRingFadeOutLength = oc.ringFadeOutLength ?? 500
+    this.demoNeedleFadeOutOffset = oc.needleFadeOutOffset ?? 2500
+    this.demoNeedleFadeOutLength = oc.needleFadeOutLength ?? 1400
+    this.demoNeedleFadeInLength  = oc.needleFadeInLength  ?? 400
+    this.devRingFadeStartTime  = null
+    this.devRingFadeDir        = 1
+    this.devRingFadeLength     = 500
+    this.devOrbitRing = null
 
     // RGB shift animation
     this.rgbShiftTime = 0
@@ -391,6 +413,22 @@ export class ThreeScene {
     if (this.letterManager) {
       this.letterManager.update()
     }
+
+    // Dev orbit ring — create once, then just track R letter position each frame
+    if (this.letterManager) {
+      const rLetter = this.letterManager.letterObjects.find(obj => obj.name === 'R')
+      if (rLetter?.mesh) {
+        if (!this.devOrbitRing) this.createDevOrbitRing()
+        rLetter.mesh.getWorldPosition(this.devOrbitRing.group.position)
+      }
+    }
+
+    // Animate ring globalOpacity
+    if (this.devOrbitRing && this.devRingFadeStartTime !== null) {
+      const t = Math.min((Date.now() - this.devRingFadeStartTime) / this.devRingFadeLength, 1)
+      this.devOrbitRing.mat.uniforms.globalOpacity.value = this.devRingFadeDir > 0 ? t : 1 - t
+      if (t >= 1) this.devRingFadeStartTime = null
+    }
     
     // Grab mode momentum (hover momentum is handled per-letter in letterManager)
     if (!this.hoverMode && !this.isDragging && this.selectedLetter && this.velocity.x !== 0) {
@@ -409,6 +447,9 @@ export class ThreeScene {
       }
     }
     
+    // Update demo orb if active
+    if (this.demoSpinOverlay) this.updateDemoOrb()
+
     // Render with post-processing
     this.composer.render()
   }
@@ -677,6 +718,8 @@ export class ThreeScene {
     this.userHasInteracted = true
     this.demoTimeouts.forEach(t => clearTimeout(t))
     this.demoTimeouts = []
+    this.hideDemoOrb()
+    this._startRingFade(-1)
   }
 
   runDemoSpin() {
@@ -702,6 +745,8 @@ export class ThreeScene {
       const rLetter = this.letterManager.letterObjects.find(obj => obj.name === 'R')
       if (!rLetter) return
 
+      this.createDemoOrb(rLetter)
+
       animateScratch(-1, rLetter)
       this.demoTimeouts.push(setTimeout(() => animateScratch(+1, rLetter), scratchGap))
       this.demoTimeouts.push(setTimeout(() => animateScratch(-1, rLetter), scratchGap * 2))
@@ -709,9 +754,305 @@ export class ThreeScene {
         if (this.userHasInteracted) return
         rLetter.hoverVelocity = spinVelocity // big fast spin — returnToRest kicks in naturally after
       }, scratchGap * 3))
+      // Fade the orb out after the spin has had time to decay
+      this.demoTimeouts.push(setTimeout(() => this.hideDemoOrb(), scratchGap * 3 + this.demoNeedleFadeOutOffset))
+      // Fade ring out
+      this.demoTimeouts.push(setTimeout(() => {
+        if (!this.userHasInteracted) this._startRingFade(-1)
+      }, scratchGap * 3 + this.demoRingFadeOutOffset))
     }
 
+    // Fade ring in (offset is relative to spin start, so absolute time = delay + offset)
+    const fadeInAt = Math.max(0, delay + this.demoRingFadeInOffset)
+    this.demoTimeouts.push(setTimeout(() => {
+      if (!this.userHasInteracted) this._startRingFade(1)
+    }, fadeInAt))
+
     this.demoTimeouts.push(setTimeout(start, delay))
+  }
+
+  buildOrbitPoints(radius) {
+    const points = []
+    const N = 64
+    const tilt = this.demoSpinOverlayXRotation * Math.PI / 180
+    const rotY = this.demoSpinOverlayYRotation
+    for (let i = 0; i <= N; i++) {
+      const a = (i / N) * Math.PI * 2
+      const bx = radius * Math.cos(a)
+      const by = radius * Math.sin(a) * Math.cos(tilt)
+      const bz = radius * Math.sin(a) * Math.sin(tilt)
+      points.push(new THREE.Vector3(
+        bx * Math.cos(rotY) + bz * Math.sin(rotY),
+        by,
+        -bx * Math.sin(rotY) + bz * Math.cos(rotY) + 0.3
+      ))
+    }
+    return points
+  }
+
+  buildTickPoints(radius) {
+    const N = this.demoSpinOverlayTickN
+    const tickHalf = this.demoSpinOverlayTickHalf
+    const tilt = this.demoSpinOverlayXRotation * Math.PI / 180
+    const rotY = this.demoSpinOverlayYRotation
+    // Orbit plane normal — ticks stand perpendicular to the orbit plane, following X and Y rotation
+    const nx = Math.cos(tilt) * Math.sin(rotY)
+    const ny = -Math.sin(tilt)
+    const nz = Math.cos(tilt) * Math.cos(rotY)
+    const points = []
+    for (let i = 0; i < N; i++) {
+      const a = (i / N) * Math.PI * 2
+      const bx = radius * Math.cos(a)
+      const by = radius * Math.sin(a) * Math.cos(tilt)
+      const bz = radius * Math.sin(a) * Math.sin(tilt)
+      const px = bx * Math.cos(rotY) + bz * Math.sin(rotY)
+      const py = by
+      const pz = -bx * Math.sin(rotY) + bz * Math.cos(rotY) + 0.3
+      points.push(new THREE.Vector3(px - nx*tickHalf, py - ny*tickHalf, pz - nz*tickHalf))
+      points.push(new THREE.Vector3(px + nx*tickHalf, py + ny*tickHalf, pz + nz*tickHalf))
+    }
+    return points
+  }
+
+  // Per-vertex alpha for the half-ring fade — front half visible, back half fades to transparent.
+  // Works with any blend mode since we use real alpha, not the additive colour trick.
+  _facingAlpha(bx, bz, radius, sinRotY, cosRotY) {
+    const facingZ = -bx * sinRotY + bz * cosRotY
+    return Math.max(0, Math.min(1, facingZ / radius))
+  }
+
+  buildOrbitAlphas(radius) {
+    const N = 64
+    const tilt = this.demoSpinOverlayXRotation * Math.PI / 180
+    const sinRotY = Math.sin(this.demoSpinOverlayYRotation)
+    const cosRotY = Math.cos(this.demoSpinOverlayYRotation)
+    const arr = new Float32Array(N + 1)
+    for (let i = 0; i <= N; i++) {
+      const a = (i / N) * Math.PI * 2
+      arr[i] = this._facingAlpha(radius * Math.cos(a), radius * Math.sin(a) * Math.sin(tilt), radius, sinRotY, cosRotY)
+    }
+    return arr
+  }
+
+  buildTickAlphas(radius) {
+    const N = this.demoSpinOverlayTickN
+    const tilt = this.demoSpinOverlayXRotation * Math.PI / 180
+    const sinRotY = Math.sin(this.demoSpinOverlayYRotation)
+    const cosRotY = Math.cos(this.demoSpinOverlayYRotation)
+    const arr = new Float32Array(N * 2)
+    for (let i = 0; i < N; i++) {
+      const a = (i / N) * Math.PI * 2
+      const alpha = this._facingAlpha(radius * Math.cos(a), radius * Math.sin(a) * Math.sin(tilt), radius, sinRotY, cosRotY)
+      arr[i * 2]     = alpha
+      arr[i * 2 + 1] = alpha
+    }
+    return arr
+  }
+
+  _ringShaderMaterial() {
+    return new THREE.ShaderMaterial({
+      uniforms: {
+        lineColor:     { value: new THREE.Color(this.demoSpinOverlayLineColor) },
+        globalOpacity: { value: 0 },
+      },
+      vertexShader: `
+        attribute float alpha;
+        varying float vAlpha;
+        void main() {
+          vAlpha = alpha;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3  lineColor;
+        uniform float globalOpacity;
+        varying float vAlpha;
+        void main() {
+          gl_FragColor = vec4(lineColor, vAlpha * globalOpacity);
+        }
+      `,
+      transparent: true,
+      blending: THREE.NormalBlending,
+      depthWrite: false,
+    })
+  }
+
+  _startRingFade(dir) {
+    this.devRingFadeStartTime = Date.now()
+    this.devRingFadeDir       = dir
+    this.devRingFadeLength    = dir > 0 ? this.demoRingFadeInLength : this.demoRingFadeOutLength
+  }
+
+  _updateRingGeos() {
+    if (!this.devOrbitRing) return
+    const r = this.demoSpinOverlayRadius
+    this.devOrbitRing.geo.setFromPoints(this.buildOrbitPoints(r))
+    this.devOrbitRing.geo.setAttribute('alpha', new THREE.BufferAttribute(this.buildOrbitAlphas(r), 1))
+    this.devOrbitRing.tickGeo.setFromPoints(this.buildTickPoints(r))
+    this.devOrbitRing.tickGeo.setAttribute('alpha', new THREE.BufferAttribute(this.buildTickAlphas(r), 1))
+  }
+
+  createDevOrbitRing() {
+    const group = new THREE.Group()
+    const mat = this._ringShaderMaterial()
+
+    const r = this.demoSpinOverlayRadius
+    const geo = new THREE.BufferGeometry().setFromPoints(this.buildOrbitPoints(r))
+    geo.setAttribute('alpha', new THREE.BufferAttribute(this.buildOrbitAlphas(r), 1))
+    const ring = new THREE.LineLoop(geo, mat)
+    group.add(ring)
+
+    const tickGeo = new THREE.BufferGeometry().setFromPoints(this.buildTickPoints(r))
+    tickGeo.setAttribute('alpha', new THREE.BufferAttribute(this.buildTickAlphas(r), 1))
+    const ticks = new THREE.LineSegments(tickGeo, mat)
+    group.add(ticks)
+
+    this.scene.add(group)
+    this.devOrbitRing = { group, ring, geo, mat, ticks, tickGeo }
+  }
+
+  setDemoOrbRadius(r) {
+    this.demoSpinOverlayRadius = r
+    this._updateRingGeos()
+  }
+
+  setTickLength(v) {
+    this.demoSpinOverlayTickHalf = v / 2
+    this._updateRingGeos()
+  }
+
+  setTickDensity(n) {
+    this.demoSpinOverlayTickN = n
+    this._updateRingGeos()
+  }
+
+  setLineColor(hexStr) {
+    this.demoSpinOverlayLineColor = hexStr
+    if (this.devOrbitRing) this.devOrbitRing.mat.uniforms.lineColor.value.set(hexStr)
+  }
+
+  setGlowColor(hexStr) {
+    this.demoSpinOverlayGlowColor = hexStr
+    if (this.demoSpinOverlay) {
+      this.demoSpinOverlay.needleMat.color.set(hexStr)
+      this.demoSpinOverlay.light.color.set(hexStr)
+    }
+  }
+
+  setNeedleSpeed(v)           { this.demoSpinOverlayNeedleSpeed = v }
+  setRingFadeInOffset(ms)     { this.demoRingFadeInOffset = ms }
+  setRingFadeInLength(ms)     { this.demoRingFadeInLength = ms }
+  setRingFadeOutOffset(ms)    { this.demoRingFadeOutOffset = ms }
+  setRingFadeOutLength(ms)    { this.demoRingFadeOutLength = ms }
+  setNeedleFadeOutOffset(ms)  { this.demoNeedleFadeOutOffset = ms }
+  setNeedleFadeOutLength(ms)  { this.demoNeedleFadeOutLength = ms }
+  setNeedleFadeInLength(ms)   { this.demoNeedleFadeInLength = ms }
+
+  setOrbitXRotation(deg) {
+    this.demoSpinOverlayXRotation = deg
+    this._updateRingGeos()
+  }
+
+  setOrbitYRotation(deg) {
+    this.demoSpinOverlayYRotation = deg * Math.PI / 180
+    this._updateRingGeos()
+  }
+
+  createDemoOrb(rLetter) {
+    const NEEDLE_HALF = 0.20 // 0.40 total length
+
+    // Cylinder mesh so we get real thickness (WebGL ignores linewidth on Line)
+    const needleGeo = new THREE.CylinderGeometry(0.025, 0.025, NEEDLE_HALF * 2, 8)
+    const needleMat = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(this.demoSpinOverlayGlowColor),
+      blending: THREE.NormalBlending,
+      transparent: true,
+      depthWrite: false,
+      opacity: 1
+    })
+    const needle = new THREE.Mesh(needleGeo, needleMat)
+    this.scene.add(needle)
+
+    // Point light for a subtle glow cast onto the letter surface
+    const light = new THREE.PointLight(new THREE.Color(this.demoSpinOverlayGlowColor), 0, 3)
+    this.scene.add(light)
+
+    // Start at the frontmost point of the orbit (max Z toward camera)
+    const tilt = this.demoSpinOverlayXRotation * Math.PI / 180
+    const startAngle = Math.atan2(Math.sin(tilt) * Math.cos(this.demoSpinOverlayYRotation), -Math.sin(this.demoSpinOverlayYRotation))
+
+    this.demoSpinOverlay = {
+      needle, needleMat, needleGeo,
+      light, NEEDLE_HALF,
+      angle: startAngle,
+      opacity: 0,
+      fadingOut: false,
+      fadeInStartTime: Date.now(),
+      fadeStartTime: null,
+      rLetter,
+    }
+  }
+
+  updateDemoOrb() {
+    const orb = this.demoSpinOverlay
+    const rLetter = orb.rLetter
+    if (!rLetter?.mesh) return
+
+    // Orbit tilted 96° around X axis — sweeps mostly left/right with depth variation,
+    // like a finger tracing horizontally across the face of the letter
+    const worldPos = new THREE.Vector3()
+    rLetter.mesh.getWorldPosition(worldPos)
+    const radius = this.demoSpinOverlayRadius
+    const tilt = this.demoSpinOverlayXRotation * Math.PI / 180
+    const rotY = this.demoSpinOverlayYRotation
+    orb.angle += rLetter.hoverVelocity * this.demoSpinOverlayNeedleSpeed
+
+    const bx = radius * Math.cos(orb.angle)
+    const by = radius * Math.sin(orb.angle) * Math.cos(tilt)
+    const bz = radius * Math.sin(orb.angle) * Math.sin(tilt)
+    const x = worldPos.x + bx * Math.cos(rotY) + bz * Math.sin(rotY)
+    const y = worldPos.y + by
+    const z = worldPos.z + (-bx * Math.sin(rotY) + bz * Math.cos(rotY)) + 0.3
+
+    // Position and orient the needle cylinder along the orbit plane normal
+    orb.needle.position.set(x, y, z)
+    const nx = Math.cos(tilt) * Math.sin(rotY)
+    const ny = -Math.sin(tilt)
+    const nz = Math.cos(tilt) * Math.cos(rotY)
+    orb.needle.quaternion.setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      new THREE.Vector3(nx, ny, nz)
+    )
+
+    orb.light.position.set(x, y, z)
+
+    if (orb.fadingOut) {
+      const t = Math.min((Date.now() - orb.fadeStartTime) / this.demoNeedleFadeOutLength, 1)
+      orb.opacity = 1 - t
+      if (t >= 1) { this.disposeDemoOrb(); return }
+    } else {
+      const t = Math.min((Date.now() - orb.fadeInStartTime) / Math.max(this.demoNeedleFadeInLength, 1), 1)
+      orb.opacity = t
+    }
+    orb.needleMat.opacity = orb.opacity
+    orb.light.intensity = orb.opacity * 1.5
+  }
+
+  hideDemoOrb() {
+    if (this.demoSpinOverlay) {
+      this.demoSpinOverlay.fadingOut = true
+      this.demoSpinOverlay.fadeStartTime = Date.now()
+    }
+  }
+
+  disposeDemoOrb() {
+    const orb = this.demoSpinOverlay
+    if (!orb) return
+    this.scene.remove(orb.needle)
+    this.scene.remove(orb.light)
+    orb.needleMat.dispose()
+    orb.needleGeo.dispose()
+    this.demoSpinOverlay = null
   }
 
   dispose() {
