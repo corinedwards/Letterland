@@ -4,7 +4,7 @@ An interactive lettering toy
 
 ## Features
 
-- **Interactive COrin**: Each letter (C, O, R, I, N) is rendered as a rotating 3D shape
+- **Interactive CORIN**: Floating letters (C, O, R, I, N) that can be swiped or scolled over to spin the letters
 - **Lettering Variations**: Unique sets opf customj lettering, randomly selected on page load
 - **Responsive Design**: 
   - Desktop: Letters displayed horizontally (C O R I N)
