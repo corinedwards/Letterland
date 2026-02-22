@@ -349,9 +349,10 @@ export class ThreeScene {
     this.demoNeedleFadeOutOffset = oc.needleFadeOutOffset ?? 2500
     this.demoNeedleFadeOutLength = oc.needleFadeOutLength ?? 1400
     this.demoNeedleFadeInLength  = oc.needleFadeInLength  ?? 400
-    this.devRingFadeStartTime  = null
-    this.devRingFadeDir        = 1
-    this.devRingFadeLength     = 500
+    this.devRingFadeStartTime   = null
+    this.devRingFadeDir         = 1
+    this.devRingFadeLength      = 500
+    this.devRingFadeStartOpacity = 0
     this.devOrbitRing = null
 
     // RGB shift animation
@@ -454,7 +455,9 @@ export class ThreeScene {
     // Animate ring globalOpacity
     if (this.devOrbitRing && this.devRingFadeStartTime !== null) {
       const t = Math.min((Date.now() - this.devRingFadeStartTime) / this.devRingFadeLength, 1)
-      this.devOrbitRing.mat.uniforms.globalOpacity.value = this.devRingFadeDir > 0 ? t : 1 - t
+      this.devOrbitRing.mat.uniforms.globalOpacity.value = this.devRingFadeDir > 0
+        ? t                                        // fade in:  0 → 1
+        : this.devRingFadeStartOpacity * (1 - t)   // fade out: startOpacity → 0
       if (t >= 1) this.devRingFadeStartTime = null
     }
     
@@ -749,7 +752,10 @@ export class ThreeScene {
     this.demoTimeouts.forEach(t => clearTimeout(t))
     this.demoTimeouts = []
     this.hideDemoOrb()
-    this._startRingFade(-1)
+    // Only fade out if the ring is actually visible — avoids a flash on every user spin
+    if ((this.devOrbitRing?.mat.uniforms.globalOpacity.value ?? 0) > 0) {
+      this._startRingFade(-1)
+    }
   }
 
   runDemoSpin() {
@@ -908,9 +914,11 @@ export class ThreeScene {
   }
 
   _startRingFade(dir) {
-    this.devRingFadeStartTime = Date.now()
-    this.devRingFadeDir       = dir
-    this.devRingFadeLength    = dir > 0 ? this.demoRingFadeInLength : this.demoRingFadeOutLength
+    // Record current opacity so fade-out starts from wherever we are (not always from 1)
+    this.devRingFadeStartOpacity = this.devOrbitRing?.mat.uniforms.globalOpacity.value ?? 0
+    this.devRingFadeStartTime    = Date.now()
+    this.devRingFadeDir          = dir
+    this.devRingFadeLength       = dir > 0 ? this.demoRingFadeInLength : this.demoRingFadeOutLength
   }
 
   _updateRingGeos() {
