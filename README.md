@@ -11,6 +11,8 @@ An interactive lettering toy
   - Mobile: Letters stacked in rows (CO / RI / N)
 - **Custom 3D Models**: Support for loading custom GLTF/GLB 3D models
 - **SVG Extrusion**: Convert flat SVG files into 3D extruded shapes
+- **Dark mode**: Switches to black and renders shapes as x-ray wioreframes with chromatic abberation and video glitching
+- **Colour palette cycler**: Cycles through 20 different background and foreground content colour palettes
 
 ## Tech Stack
 
