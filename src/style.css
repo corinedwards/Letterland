@@ -70,12 +70,11 @@ table{
 }
 
 td{
-  /* padding: 0.4lvw 0.4lvw 0.4lvw 0; */
-  /* border: Solid 1px #fff; */
   color:#fff;
   mix-blend-mode: difference;
   padding:0 1em 1em 0;
-  vertical-align: top;
+  vertical-align: baseline;
+ 
 }
 
 .keyboard-key{
@@ -88,6 +87,7 @@ td{
   font-size:8pt;
   background:#111;
   margin-bottom:4px;
+  line-height: 3em;
 }
 
 .pill {
@@ -108,6 +108,7 @@ td{
   position: relative;
   width: 100%;
   height: clamp(200px, 35vh, 450px);
+  margin-top:40px;
 }
 
 .controls {
@@ -116,10 +117,6 @@ td{
   left: auto;
   bottom: auto;
   padding: 20px;
-  /* position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);*/
   display: flex;
   gap: 8px;
   z-index: 100;
@@ -296,6 +293,7 @@ body.dark-mode .ctrl-btn:focus-visible {
 @media (max-width: 768px) {
   #three-container {
     height: 70vh;
+     margin-top:0;
   }
   
   .controls {
@@ -321,9 +319,9 @@ body.dark-mode .ctrl-btn:focus-visible {
       "welcome"
       "appointments"
       "contributions";
-
     gap:2em;
     padding: 2em;
     }
+
   
 }
