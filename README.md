@@ -1,11 +1,11 @@
-# Corin Edwards - Portfolio CV Website
+# Letterland
 
-An interactive portfolio website featuring a stunning 3D header with rotating letter shapes spelling "CORIN".
+An interactive lettering toy
 
 ## Features
 
-- **Interactive 3D Header**: Each letter (C, O, R, I, N) is rendered as a rotating 3D shape
-- **Shape Variations**: 5+ unique shape variations per letter, randomly selected on page load
+- **Interactive COrin**: Each letter (C, O, R, I, N) is rendered as a rotating 3D shape
+- **Lettering Variations**: Unique sets opf customj lettering, randomly selected on page load
 - **Responsive Design**: 
   - Desktop: Letters displayed horizontally (C O R I N)
   - Mobile: Letters stacked in rows (CO / RI / N)
@@ -16,7 +16,6 @@ An interactive portfolio website featuring a stunning 3D header with rotating le
 
 - **Vite** - Fast build tool and dev server
 - **Three.js** - 3D graphics library
-- **Vanilla JavaScript** - No framework bloat
 
 ## Getting Started
 
