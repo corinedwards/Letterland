@@ -287,11 +287,6 @@ export class ThreeScene {
     directionalLight2.position.set(-5, -5, 5)
     this.scene.add(directionalLight2)
 
-    // Debug grid — 20×20 units, 1-unit cells, in the XY plane behind the letters
-    this.debugGrid = new THREE.GridHelper(20, 20, 0x888888, 0x888888)
-    this.debugGrid.rotation.x = Math.PI / 2
-    this.debugGrid.position.z = -3
-    this.scene.add(this.debugGrid)
 
     // Initialize letter manager with pre-configured shape factory
     this.letterManager = new LetterManager(this.scene, this.shapeFactory, this.settings.returnToRest, this.settings.returnToRestSpeed, this.settings.floating)
@@ -332,6 +327,11 @@ export class ThreeScene {
     this.darkMode = false
     this.userHasInteracted = false
     this.demoTimeouts = []
+
+    // Group cycling — parsed from the raw config (before key expansion) so comma-separated
+    // groups like "C-Chunky, O-Chunky, ..." are preserved as coordinated sets.
+    this.shapeGroups = this._parseShapeGroups(this.shapeFactory?.fileLoader?.rawConfig || {})
+    this.currentGroupIndex = -1 // -1 = random mode
     this.demoSpinOverlay = null
     const oc = this.settings.demoSpinOverlay
     this.demoSpinOverlayRadius       = oc.radius        ?? 0.75
@@ -593,15 +593,18 @@ export class ThreeScene {
   
   onMouseMove(event) {
     if (this.hoverMode) {
+      // Any mouse movement over the canvas counts as interaction — cancel demo once
+      if (!this.userHasInteracted) this.cancelDemo()
+
       // Track global mouse velocity
       const deltaX = event.clientX - this.previousMousePosition.x
-      
+
       if (this.previousMousePosition.x !== 0 && Math.abs(deltaX) > 0) {
         const baseVelocity = deltaX * 0.015
-        
+
         // Check which letter we're hovering
         const letter = this.checkHover(event)
-        
+
         if (letter) {
           // Apply full velocity to hovered letter
           letter.hoverVelocity = baseVelocity
@@ -740,7 +743,49 @@ export class ThreeScene {
     // Reapply current dark mode state to new letters immediately
     this.letterManager.setDarkMode(this.darkMode || false)
   }
-  
+
+  // Parse config keys into a list of groups: [{ label, assignments: { C: 'ShapeName', ... } }]
+  // Keys starting with _ are skipped. For each remaining key, the first LETTER-ShapeName
+  // occurrence per letter is used (later duplicates for the same letter are ignored).
+  _parseShapeGroups(config) {
+    const LETTERS = new Set(['C', 'O', 'R', 'I', 'N'])
+    const skip = new Set(['_readme', '_scene', '_defaults'])
+    const groups = []
+    for (const key of Object.keys(config)) {
+      if (skip.has(key)) continue
+      const assignments = {}
+      key.split(',').forEach(part => {
+        const dash = part.trim().indexOf('-')
+        if (dash === -1) return
+        const letter = part.trim().slice(0, dash).toUpperCase()
+        const fullKey = part.trim() // e.g. "C-ShotTheSerif" — must match shapeNames[letter]
+        if (LETTERS.has(letter) && !(letter in assignments)) {
+          assignments[letter] = fullKey
+        }
+      })
+      if (Object.keys(assignments).length >= 3) {
+        groups.push({ label: key.trim(), assignments })
+      }
+    }
+    return groups
+  }
+
+  // Advance to the next group (wraps around). Unspecified letters get random shapes.
+  cycleGroup() {
+    if (this.shapeGroups.length === 0) return
+    this.currentGroupIndex = (this.currentGroupIndex + 1) % this.shapeGroups.length
+    const { assignments } = this.shapeGroups[this.currentGroupIndex]
+    this.letterManager.regenerateLetters(assignments)
+    this.updateLetterSpacing(this.settings.spacing, this.settings.lineHeight)
+    this.letterManager.setDarkMode(this.darkMode || false)
+  }
+
+  // Back to fully random shape selection
+  randomMode() {
+    this.currentGroupIndex = -1
+    this.regenerateLetters()
+  }
+
   spinLetter(name) {
     const letter = this.letterManager.letterObjects.find(obj => obj.name === name.toUpperCase())
     if (!letter) return

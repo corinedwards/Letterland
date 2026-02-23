@@ -34,6 +34,7 @@ export class ShapeFileLoader {
       // Add timestamp to prevent caching
       const response = await fetch(`${import.meta.env.BASE_URL}letters/shapes-config.json?t=${Date.now()}`)
       const rawConfig = await response.json()
+      this.rawConfig = rawConfig // keep original before key expansion (used for group parsing)
 
       // Expand comma-separated keys into individual entries
       this.config = {}

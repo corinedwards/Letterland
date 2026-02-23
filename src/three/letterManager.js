@@ -21,12 +21,19 @@ export class LetterManager {
     this.paused = false
   }
 
-  createLetters() {
+  createLetters(specificShapes = {}) {
     const letterNames = ['C', 'O', 'R', 'I', 'N']
-    
+
+    const groupMode = Object.keys(specificShapes).length > 0
+
     letterNames.forEach((letter, index) => {
-      // Get a random shape for this letter
-      const shape = this.shapeFactory.getRandomShape(letter)
+      // Group mode: use specified shape, or a wireframe cube for unspecified letters
+      // Random mode: pick randomly as usual
+      const shape = groupMode
+        ? (specificShapes[letter]
+            ? this.shapeFactory.getShapeByName(letter, specificShapes[letter])
+            : this._createWireframeCube())
+        : this.shapeFactory.getRandomShape(letter)
       
       // Enable shadows on the shape
       shape.castShadow = true
@@ -130,8 +137,8 @@ export class LetterManager {
     this.updateLayout()
   }
 
-  // Regenerate letters with new random shapes
-  regenerateLetters() {
+  // Regenerate letters — pass specificShapes to pin particular shapes, otherwise random
+  regenerateLetters(specificShapes = {}) {
     // Remove old letters from scene
     this.letterObjects.forEach(letterObj => {
       this.scene.remove(letterObj.mesh)
@@ -156,8 +163,16 @@ export class LetterManager {
     this.letterObjects = []
     this.boundingBoxHelpers = []
     
-    // Create new letters with new random shapes
-    this.createLetters()
+    // Create new letters with specific or random shapes
+    this.createLetters(specificShapes)
+  }
+
+  _createWireframeCube() {
+    const geo = new THREE.BoxGeometry(2, 2, 2)
+    const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
+    const mesh = new THREE.Mesh(geo, mat)
+    mesh.userData.shapeName = 'wireframe-cube'
+    return mesh
   }
 
   updateLayout() {

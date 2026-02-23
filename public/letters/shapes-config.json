@@ -108,7 +108,7 @@
     "rotationY": 0,
     "rotationZ": 0
   },
-  "C-ComputerSpace, C-CyberLip, O-Dreamcast, R-YagiSega, I-CaliforniaGames, N-Pong" : {
+  "C-Arcade, O-Arcade, R-Arcade, I-Arcade, N-Arcade" : {
       "color": "#FFDF00",
       "emissive": "#FFD639",
       "emissiveIntensity": 0.4,
@@ -131,13 +131,24 @@
   "C-Chunky, O-Chunky, O-3D, O-Moon, R-3D, R-Chunky, I-Chunky, N-Chunky" : {
     "color": "#ffffff",
     "extrudeDepth": 36,
-    "metalness": 0,
+    "metalness": 2.2,
     "roughness": 0.9,
     "emissive": "#ffffff",
     "emissiveIntensity": 1,
     "edges": true,
     "edgeColor": "#003882",
     "edgeColor": "#0311a1"
+  },
+  "C-ShotTheSerif, O-ShotTheSerif, R-ShotTheSerif, I-ShotTheSerif, N-ShotTheSerif" : {
+    "color": "#8f00ff",
+    "extrudeDepth": 1,
+    "bevelThickness": 2,
+    "bevelSize": 4,
+    "metalness": 0.2,
+    "roughness": 0.2,
+    "emissive": "#c600ff",
+    "emissiveIntensity": 0.8,
+    "scale": 0.9
   },
   "C-Cactus" :{
      "texture": "C-Cactus.png",

@@ -43,6 +43,7 @@ body.loaded {
 
 body p{
   mix-blend-mode: difference;
+  padding-bottom:1em
 }
 
 H1, H2, ul li, p{

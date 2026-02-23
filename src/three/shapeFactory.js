@@ -101,10 +101,18 @@ export class ShapeFactory {
     const shapeCreators = this.shapes[letter]
     const randomIndex = Math.floor(Math.random() * shapeCreators.length)
     const shape = shapeCreators[randomIndex]()
-    
+
     // Store shape name for later reference (dark mode restore)
     shape.userData.shapeName = this.shapeNames[letter][randomIndex]
-    
+
+    return shape
+  }
+
+  getShapeByName(letter, shapeName) {
+    const idx = this.shapeNames[letter]?.indexOf(shapeName)
+    if (idx == null || idx === -1) return this.getRandomShape(letter)
+    const shape = this.shapes[letter][idx]()
+    shape.userData.shapeName = shapeName
     return shape
   }
 

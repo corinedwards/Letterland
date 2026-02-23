@@ -155,6 +155,7 @@ window.addEventListener('keydown', (e) => {
     case 'r': case 'R': scene.spinLetter('R'); break
     case 'i': case 'I': scene.spinLetter('I'); break
     case 'n': case 'N': scene.spinLetter('N'); break
+    case 'g': case 'G': scene.cycleGroup(); break
   }
 })
 
