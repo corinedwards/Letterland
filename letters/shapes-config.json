@@ -141,12 +141,10 @@
   },
   "C-ShotTheSerif, O-ShotTheSerif, R-ShotTheSerif, I-ShotTheSerif, N-ShotTheSerif" : {
     "color": "#8f00ff",
-    "extrudeDepth": 1,
-    "bevelThickness": 2,
-    "bevelSize": 4,
-    "metalness": 0.2,
-    "roughness": 0.2,
-    "emissive": "#c600ff",
+    "extrudeDepth": 2,
+    "metalness": 0.8,
+    "roughness": 0.4,
+    "emissive": "#8f00ff",
     "emissiveIntensity": 0.8,
     "scale": 0.9
   },
