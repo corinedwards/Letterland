@@ -65,7 +65,7 @@ export class ShapeFileLoader {
     // In a real browser environment, we can't actually scan directories
     // So we'll use import.meta.glob with Vite to get all files
     const files = import.meta.glob('/public/letters/*.(glb|gltf|svg|png|jpg|jpeg)', { eager: false })
-    
+
     const shapes = {
       C: [],
       O: [],
@@ -73,41 +73,60 @@ export class ShapeFileLoader {
       I: [],
       N: []
     }
-    
+
     const textures = {}
-    
-    // Parse filenames
+
+    // Collect all file paths grouped by key so we can detect baked SVG/GLB pairs
+    const byKey = {}   // key → { letter, name, glb?, svg? }
+
     for (const path in files) {
       const filename = path.split('/').pop()
       const match = filename.match(/^([CORIN])-(.+)\.(glb|gltf|svg|png|jpg|jpeg)$/i)
-      
-      if (match) {
-        const letter = match[1].toUpperCase()
-        const name = match[2]
-        const ext = match[3].toLowerCase()
-        const key = `${letter}-${name}`
-        
-        if (ext === 'png' || ext === 'jpg' || ext === 'jpeg') {
-          textures[key] = import.meta.env.BASE_URL + path.replace('/public/', '')
-        } else {
-          shapes[letter].push({
-            name,
-            key,
-            path: import.meta.env.BASE_URL + path.replace('/public/', ''),
-            type: ext === 'svg' ? 'svg' : 'glb',
-            config: this.config[key] || {}
-          })
-        }
+      if (!match) continue
+
+      const letter = match[1].toUpperCase()
+      const name   = match[2]
+      const ext    = match[3].toLowerCase()
+      const key    = `${letter}-${name}`
+
+      if (ext === 'png' || ext === 'jpg' || ext === 'jpeg') {
+        textures[key] = import.meta.env.BASE_URL + path.replace('/public/', '')
+        continue
+      }
+
+      if (!byKey[key]) byKey[key] = { letter, name }
+      if (ext === 'svg') {
+        byKey[key].svg = path
+      } else {
+        byKey[key].glb = path
       }
     }
-    
+
+    // Build shape list — when both GLB and SVG exist for the same key, prefer
+    // the GLB (it's a baked version) and mark it so loadGLB skips rotation.
+    for (const [key, entry] of Object.entries(byKey)) {
+      const { letter, name } = entry
+      const usePath = entry.glb ?? entry.svg
+      const ext     = usePath.split('.').pop().toLowerCase()
+      const bakedSVG = !!(entry.glb && entry.svg)   // GLB was baked from this SVG
+
+      shapes[letter].push({
+        name,
+        key,
+        path: import.meta.env.BASE_URL + usePath.replace('/public/', ''),
+        type: ext === 'svg' ? 'svg' : 'glb',
+        bakedSVG,
+        config: this.config[key] || {}
+      })
+    }
+
     // Match textures to shapes
     Object.values(shapes).flat().forEach(shape => {
       if (textures[shape.key]) {
         shape.texture = textures[shape.key]
       }
     })
-    
+
     return shapes
   }
 

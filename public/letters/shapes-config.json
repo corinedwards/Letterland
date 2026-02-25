@@ -114,7 +114,7 @@
       "emissiveIntensity": 0.4,
       "extrudeDepth": 24
   },
-  "C-Raverwave, R-Raverwave, I-Raverwave, N-Raverwave": {
+  "C-Raverwave, O-Raverwave, R-Raverwave, I-Raverwave, N-Raverwave": {
     "color": "#862AFE",
     "emissive": "#2AFE59",
     "emissiveIntensity": 0.8,
@@ -128,7 +128,7 @@
     "emissive": "#ff8647",
     "emissiveIntensity": 0.4
   },
-  "C-Chunky, O-Chunky, O-3D, O-Moon, R-3D, R-Chunky, I-Chunky, N-Chunky" : {
+  "C-NewWave, O-NewWave, O-NewWave, R-NewWave, I-NewWave, N-NewWave" : {
     "color": "#ffffff",
     "extrudeDepth": 36,
     "metalness": 2.2,
@@ -164,25 +164,6 @@
     "rotationY": 0,
     "rotationZ": 0,
     "emissiveIntensity": 1.1
-  },
-  "O-Archive, I-PaulFranck":{
-    "color": "#a19a7a",
-    "extrudeDepth": 10,
-    "edges": true,
-    "edgeColor": "#c2b165",
-    "metalness": 0.7,
-    "roughness": 0
-    },
-  "R-3D":{
-    "scale": 1.4
-  },
-  "N-Diagram":{
-    "color": "#8db3da",
-    "color": "#00ddff",
-    "extrudeDepth": 18,
-    "metalness": 0.4,
-    "edges": true,
-    "edgeColor": "#5cfaff"
   },
   "N-Giraffe":{
     "emissiveIntensity": 8.4,
