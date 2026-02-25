@@ -141,8 +141,8 @@
   },
   "C-ShotTheSerif, O-ShotTheSerif, R-ShotTheSerif, I-ShotTheSerif, N-ShotTheSerif" : {
     "color": "#8f00ff",
-    "extrudeDepth": 2,
-    "metalness": 0.8,
+    "extrudeDepth": 22,
+    "metalness": 3.8,
     "roughness": 0.4,
     "emissive": "#8f00ff",
     "emissiveIntensity": 0.8,
