@@ -62,12 +62,14 @@ a:visited{
 }
 
 table{
+  display: block;
   border: Solid 1px #fff;
   mix-blend-mode: difference;
+  margin:0;
   padding:1em;
-   border-radius: 8px; 
-   margin-bottom:1em;
-   font-size:10pt;
+  border-radius: 1vh; 
+  margin-bottom:1em;
+  font-size:10pt;
 }
 
 td{
@@ -91,13 +93,27 @@ td{
   line-height: 3em;
 }
 
+ul.cheevos li{
+  list-style-type:none;
+    font-size:small;
+}
+
+.pill:before{
+  content: "\1F3C6";
+  margin-right:0.4vh;
+  font-size:small
+}
+
 .pill {
-  border:solid 1px; 
+  /* border:solid 1px; */
+  background:rgba(255,255,255,0.1);
   border-radius: 8px; 
   display:inline-block;
   text-align: left;
   vertical-align: middle;
-  padding:0.2lvh 0.4lvh;
+  padding:0.1lvh 0.6lvh;
+
+  font-weight:500;
 }
 
 #app {
@@ -244,9 +260,12 @@ body.dark-mode .ctrl-btn:focus-visible {
 
 
 .parent{
+
   display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas:
     "header header header"
+    "welcome appointments contributions"
     "welcome appointments contributions";
   gap:2em;
   padding: 1em;
@@ -258,9 +277,16 @@ body.dark-mode .ctrl-btn:focus-visible {
 .parent .child.welcome{
     grid-area: welcome;
 
+
   }
-.parent .child.info{
-    grid-area: info;
+.parent .appointments{
+    grid-area: appointments;
+
+
+  }
+.parent .contributions{
+    grid-area: contributions;
+
   }
 
   .parent p,ul li{
