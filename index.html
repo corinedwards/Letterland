@@ -5,8 +5,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Corin Edwards - Portfolio</title>
-    <script type="module" crossorigin src="./assets/index-g8pY52gQ.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CUVlyvuX.css">
+    <script type="module" crossorigin src="./assets/index-5VM7VYzn.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-htG3qf2H.css">
   </head>
   <body>
     <!-- Loading overlay -->
@@ -15,7 +15,13 @@
     </div>
     
     <div id="app">
-      <div id="three-container"></div>
+      <div id="three-container"
+           role="application"
+           tabindex="0"
+           aria-label="Interactive 3D lettering spelling CORIN. Drag to spin."
+           aria-keyshortcuts="S P D B G C O R I N"
+           aria-describedby="keyboard-shortcuts">
+      </div>
       <div class="controls" role="toolbar" aria-label="View controls">
         <button class="ctrl-btn" id="refresh" aria-label="Shuffle letter shapes" aria-keyshortcuts="s">
           <img class="na-icon" src="./buttons/NA.svg" alt="" aria-hidden="true" />
@@ -123,9 +129,21 @@
 
               <!-- <P>This funny looking number is a <emphasis>Hexadecimal</emphasis>. It represents the large block of colour in the background of this website. You can use one of the buttons above, or keyboard shortcuts to change this colour. All the writing on this website has had a blend mode called <a href="https://typefully.com/DanHollick/blending-modes-KrBa0JP">Difference</a>. This blends those two colours together so you can make sometimes pleasant, and sometimes very wild, combinations of colour</P> -->
             </div>
-            <div class="contributions">
+            <div class="contributions" id="keyboard-shortcuts">
               <h2>Keyboard Shortcuts</h2>
-              <table>
+              <p>Shuffle letters = <span class="keyboard-key">S</span><br>
+              Dark mode	= <span class="keyboard-key">D</span><br>
+              Background colours	= <span class="keyboard-key">B</span><br>
+              Pause	= <span class="keyboard-key">P</span><br>
+              Spin letters = <span class="keyboard-key">C</span> , <span class="keyboard-key">O</span> , <span class="keyboard-key">R</span> , <span class="keyboard-key">I</span> , <span class="keyboard-key">N</span></p>
+              <!-- <ul>
+                <li>Shuffle letters	= <span class="keyboard-key">S</span></li>
+                <li>Dark mode	= <span class="keyboard-key">D</li>
+                <li>Background colours	= <span class="keyboard-key">B</span></li>
+                <li>Pause	= <span class="keyboard-key">P</li>
+                <li>Spin letters = <span class="keyboard-key">C</span> , <span class="keyboard-key">O</span> , <span class="keyboard-key">R</span> , <span class="keyboard-key">I</span> , <span class="keyboard-key">N</span></li>
+              </ul> -->
+              <!-- <table>
                 <tr>
                 </tr>
                 <tr>
@@ -148,7 +166,7 @@
                   <td>Spin letters</td>
                   <td><span class="keyboard-key">C</span> <span class="keyboard-key">O</span> <span class="keyboard-key">R</span> <span class="keyboard-key">I</span> <span class="keyboard-key">N</span></td>
                 </tr>
-              </table>           
+              </table>            -->
             </div>
           </div>
 <div class="parent">
