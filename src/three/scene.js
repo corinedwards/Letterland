@@ -62,7 +62,6 @@ export class ThreeScene {
   init() {
     // Scene setup
     this.scene = new THREE.Scene()
-    this.scene.background = new THREE.Color(0xffffff)
 
     // Camera setup — 50° telephoto FOV for desktop, 75° for mobile
     const isMobileInit = this.container.clientWidth < 768
@@ -75,7 +74,8 @@ export class ThreeScene {
     this.camera.position.z = isMobileInit ? this.settings.cameraZ : this.computeDesktopCameraZ()
 
     // Renderer setup
-    this.renderer = new THREE.WebGLRenderer({ antialias: true })
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    this.renderer.setClearColor(0x000000, 0)
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight)
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     this.container.appendChild(this.renderer.domElement)
@@ -696,7 +696,7 @@ export class ThreeScene {
   }
 
   setBackgroundColor(color) {
-    this.scene.background = new THREE.Color(color)
+    document.body.style.backgroundColor = color
   }
 
   setPaused(paused) {
@@ -711,7 +711,6 @@ export class ThreeScene {
     
     if (enabled) {
       // Dark mode: black background, white shapes in wireframe
-      this.scene.background = new THREE.Color(0x000000)
       document.body.style.backgroundColor = '#000000'
       
       // Enable distortion/slicing and RGB shift (CRT glow off)
@@ -721,7 +720,6 @@ export class ThreeScene {
     } else {
       // Restore normal background
       const bgColor = localStorage.getItem('bgColor') || '#ffffff'
-      this.scene.background = new THREE.Color(bgColor)
       document.body.style.backgroundColor = bgColor
       
       // Disable all effects
