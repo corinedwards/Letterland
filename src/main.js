@@ -9,7 +9,7 @@ async function initApp() {
   const isDarkMode = localStorage.getItem('isDarkMode') === 'true'
   
   // Apply background and dark mode immediately (before fade-in)
-  document.body.style.backgroundColor = bgColor
+  document.documentElement.style.backgroundColor = bgColor
   const overlay = document.getElementById('loading-overlay')
   if (overlay) {
     overlay.style.backgroundColor = bgColor
@@ -42,12 +42,14 @@ async function initApp() {
     requestAnimationFrame(() => {
       const overlay = document.getElementById('loading-overlay')
       if (overlay) {
-        overlay.classList.add('hidden')
-        // Remove from DOM after transition
+        const hideDelay = sceneSettings.demoLoadDelay ? 5000 : 0
         setTimeout(() => {
-        overlay.remove()
-        scene.runDemoSpin()
-      }, 400)
+          overlay.classList.add('hidden')
+          setTimeout(() => {
+            overlay.remove()
+            scene.runDemoSpin()
+          }, 400)
+        }, hideDelay)
       }
       document.body.classList.add('loaded')
     })
@@ -91,11 +93,13 @@ updateNAStates()
 
 // Shuffle / regenerate
 refreshBtn.addEventListener('click', () => {
+  flashActivated(refreshBtn)
   scene.regenerateLetters()
 })
 
 // Pause motion toggle
 pauseMotionBtn.addEventListener('click', () => {
+  flashActivated(pauseMotionBtn)
   const paused = pauseMotionBtn.getAttribute('aria-pressed') !== 'true'
   pauseMotionBtn.setAttribute('aria-pressed', String(paused))
   localStorage.setItem('isPaused', paused)
@@ -105,6 +109,7 @@ pauseMotionBtn.addEventListener('click', () => {
 
 // Dark mode toggle
 darkModeBtn.addEventListener('click', () => {
+  flashActivated(darkModeBtn)
   const darkMode = darkModeBtn.getAttribute('aria-pressed') !== 'true'
   darkModeBtn.setAttribute('aria-pressed', String(darkMode))
   localStorage.setItem('isDarkMode', darkMode)
@@ -115,11 +120,11 @@ darkModeBtn.addEventListener('click', () => {
 
 // Background colour — cycle through presets (shift-click to go backwards)
 bgColorBtn.addEventListener('click', (e) => {
+  flashActivated(bgColorBtn)
   bgColorIndex = (bgColorIndex + (e.shiftKey ? -1 : 1) + bgColors.length) % bgColors.length
   const color = bgColors[bgColorIndex]
   localStorage.setItem('bgColor', color)
   scene.setBackgroundColor(color)
-  document.body.style.backgroundColor = color
   bgColorLabel.textContent = color.toUpperCase()
 })
 
@@ -136,6 +141,18 @@ function setButtonNA(btn, isNA) {
   btn.disabled = isNA
 }
 
+function flashActivated(el) {
+  if (!el) return
+  el.classList.remove('is-activated')
+  void el.offsetWidth // force reflow to restart animation
+  el.classList.add('is-activated')
+  el.addEventListener('animationend', () => el.classList.remove('is-activated'), { once: true })
+}
+
+function flashKey(key) {
+  flashActivated(document.querySelector(`.keyboard-key[data-key="${key}"]`))
+}
+
 // Keyboard shortcuts (WCAG 2.1.4 compliant — only fire when no interactive element has focus)
 window.addEventListener('keydown', (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return
@@ -145,16 +162,16 @@ window.addEventListener('keydown', (e) => {
   if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON') return
 
   switch (e.key) {
-    case 's': refreshBtn.click(); break
-    case 'd': darkModeBtn.click(); break
-    case 'b': bgColorBtn.click(); break
-    case 'B': bgColorBtn.dispatchEvent(new MouseEvent('click', { shiftKey: true })); break
-    case 'p': pauseMotionBtn.click(); break
-    case 'c': case 'C': scene.spinLetter('C'); break
-    case 'o': case 'O': scene.spinLetter('O'); break
-    case 'r': case 'R': scene.spinLetter('R'); break
-    case 'i': case 'I': scene.spinLetter('I'); break
-    case 'n': case 'N': scene.spinLetter('N'); break
+    case 's': flashKey('s'); refreshBtn.click(); break
+    case 'd': flashKey('d'); darkModeBtn.click(); break
+    case 'b': flashKey('b'); bgColorBtn.click(); break
+    case 'B': flashKey('b'); bgColorBtn.dispatchEvent(new MouseEvent('click', { shiftKey: true })); break
+    case 'p': flashKey('p'); pauseMotionBtn.click(); break
+    case 'c': case 'C': flashKey('c'); scene.spinLetter('C'); break
+    case 'o': case 'O': flashKey('o'); scene.spinLetter('O'); break
+    case 'r': case 'R': flashKey('r'); scene.spinLetter('R'); break
+    case 'i': case 'I': flashKey('i'); scene.spinLetter('I'); break
+    case 'n': case 'N': flashKey('n'); scene.spinLetter('N'); break
     case 'g': case 'G': scene.cycleGroup(); break
   }
 })

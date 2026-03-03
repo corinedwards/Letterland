@@ -11,11 +11,8 @@
 
 body {
   font-family: sans-serif;
-  background: #ffffff;
   color: #000000;
   overflow-x: hidden;
-    background-image: radial-gradient(circle at 50% 100px , rgba(255,255,255,0.2), rgba(255,255,255,0));
-
 }
 
 #loading-overlay {
@@ -28,8 +25,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /*font-family: 'Courier New', Courier, monospace;*/
-  font-size: 14pt;
   z-index: 9999;
   transition: opacity 0.4s ease-out;
 }
@@ -37,6 +32,25 @@ body {
 #loading-overlay.hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+@keyframes sine-scroll {
+  to { background-position: 0 10px; } /* one tile height downward */
+}
+.loader {
+  width: 56px;   /* mask ratio: 1182 / 1423 ≈ 0.83 */
+  height: 68px;
+  background-image: url('/buttons/sine_pattern.svg');
+  background-repeat: repeat;
+  background-size: 10px 10px;
+  -webkit-mask-image: url('/buttons/sine_mask.svg');
+  mask-image: url('/buttons/sine_mask.svg');
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  filter: invert(1);
+  mix-blend-mode: difference;
+  animation: sine-scroll 0.2s linear infinite;
 }
 
 body.loaded {
@@ -141,10 +155,8 @@ ul.cheevos li{
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
-  mix-blend-mode: difference; 
-  
+  mix-blend-mode: difference;
 }
-
 
 /* Icon buttons — 44×44px touch target (WCAG 2.5.8), no extra border (SVGs have their own frames) */
 .ctrl-btn {
@@ -175,7 +187,8 @@ ul.cheevos li{
 }
 
 /* White icons; .controls carries the difference blend against the page backdrop */
-.ctrl-btn svg {
+.ctrl-btn svg,
+.ctrl-btn img:not(.na-icon) {
   display: block;
   width: 100%;
   height: 100%;
@@ -195,8 +208,15 @@ ul.cheevos li{
   outline-offset: 2px;
 }
 
-.ctrl-btn:active {
-  transform: scale(var(--btn-tap-scale));
+@keyframes key-tap {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(var(--btn-tap-scale)); }
+  100% { transform: scale(1); }
+}
+
+.ctrl-btn.is-activated,
+.keyboard-key.is-activated {
+  animation: key-tap 150ms ease-out;
 }
 
 /* NA / disabled state */
@@ -320,10 +340,6 @@ body.dark-mode .ctrl-btn:focus-visible {
 /* Mobile layout */
 @media (max-width: 768px) {
 
-body{
-      background-image: radial-gradient(ellipse 50% 60vh at 50% 6% , rgba(255, 255, 255, 0.16), rgba(255,255,255,0));
-
-}
 
 
   #three-container {
@@ -342,6 +358,7 @@ body{
   
   .content h1 {
     font-size: 2rem;
+    text-align:center;
   }
   
   .content p {

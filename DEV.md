@@ -50,6 +50,22 @@ When commands are shown in a shaded box, type (or paste) **only the text inside 
 
 ---
 
+## localStorage — saved user preferences
+
+The site saves three things to the browser's localStorage (no expiry, stays until the user clears browser data):
+
+| Key | Values | What it does |
+|---|---|---|
+| `bgColor` | e.g. `"#4D22B3"` | Restores the last background colour on next visit |
+| `isDarkMode` | `"true"` / `"false"` | Restores dark mode state |
+| `isPaused` | `"true"` / `"false"` | Restores pause state |
+
+These are read back and applied in `src/main.js` before the first render, so there's no flash of the wrong colour on load. Letter shapes are intentionally **not** saved — you get a fresh shuffle each visit.
+
+localStorage is device/browser-specific and never sent to the server, so no cookie consent needed.
+
+---
+
 ## Typical session
 1. Open Terminal in the Letterland folder
 2. `npm run dev` → test changes at localhost:5173

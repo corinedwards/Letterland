@@ -696,7 +696,7 @@ export class ThreeScene {
   }
 
   setBackgroundColor(color) {
-    document.body.style.backgroundColor = color
+    document.documentElement.style.backgroundColor = color
   }
 
   setPaused(paused) {
@@ -711,7 +711,7 @@ export class ThreeScene {
     
     if (enabled) {
       // Dark mode: black background, white shapes in wireframe
-      document.body.style.backgroundColor = '#000000'
+      document.documentElement.style.backgroundColor = '#000000'
       
       // Enable distortion/slicing and RGB shift (CRT glow off)
       this.rgbShiftPass.enabled = true
@@ -720,7 +720,7 @@ export class ThreeScene {
     } else {
       // Restore normal background
       const bgColor = localStorage.getItem('bgColor') || '#ffffff'
-      document.body.style.backgroundColor = bgColor
+      document.documentElement.style.backgroundColor = bgColor
       
       // Disable all effects
       this.rgbShiftPass.enabled = false
