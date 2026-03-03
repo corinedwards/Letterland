@@ -1,6 +1,7 @@
 {
   "_readme": "Optional config for custom shapes. Only include shapes that need custom settings. Files auto-load from this folder using naming: LETTER-shapename.glb or LETTER-shapename.svg. Textures auto-match: LETTER-shapename.png",
   "_scene": {
+    "demoLoadDelay": false,
     "spacing": 1.75,
     "lineHeight": 3,
     "mobileSpacing": 1.4,

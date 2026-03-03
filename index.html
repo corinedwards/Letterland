@@ -5,13 +5,13 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Corin Edwards - Portfolio</title>
-    <script type="module" crossorigin src="./assets/index-BN67wSG5.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BXXQDOqS.css">
+    <script type="module" crossorigin src="./assets/index-B8J9xo7C.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DZTxtTGv.css">
   </head>
   <body>
     <!-- Loading overlay -->
     <div id="loading-overlay">
-      <div>...</div>
+      <div class="loader"></div>
     </div>
     
     <div id="app">
@@ -23,7 +23,7 @@
            aria-describedby="keyboard-shortcuts">
       </div>
       <div class="controls" role="toolbar" aria-label="View controls">
-        <button class="ctrl-btn" id="refresh" aria-label="Shuffle letter shapes" aria-keyshortcuts="s">
+        <button class="ctrl-btn" id="refresh" aria-label="Shuffle letter shapes, keyboard shortcut S" aria-keyshortcuts="s">
           <img class="na-icon" src="./buttons/NA.svg" alt="" aria-hidden="true" />
           <svg viewBox="0 0 991 1003" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
             <g transform="translate(-213.303806,-780.23294)">
@@ -42,7 +42,7 @@
           </svg>
         </button>
 
-        <button class="ctrl-btn" id="dark-mode" aria-pressed="false" aria-label="Dark mode" aria-keyshortcuts="d">
+        <button class="ctrl-btn" id="dark-mode" aria-pressed="false" aria-label="Dark mode, keyboard shortcut D" aria-keyshortcuts="d">
           <img class="na-icon" src="./buttons/NA.svg" alt="" aria-hidden="true" />
           <svg viewBox="0 0 991 1003" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
             <g transform="translate(-1394.406168,-2103.067585)">
@@ -57,7 +57,7 @@
           </svg>
         </button>
 
-        <button class="ctrl-btn" id="bg-color-btn" aria-label="Choose background colour" aria-keyshortcuts="b">
+        <button class="ctrl-btn" id="bg-color-btn" aria-label="Choose background colour, keyboard shortcut B" aria-keyshortcuts="b">
           <img class="na-icon" src="./buttons/NA.svg" alt="" aria-hidden="true" />
           <svg viewBox="0 0 991 1003" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
             <g transform="matrix(1,0,0,1,-213.303609,-2103.067585)">
@@ -81,7 +81,7 @@
           </svg>
         </button>
 
-        <button class="ctrl-btn" id="pause-motion" aria-pressed="false" aria-label="Pause motion" aria-keyshortcuts="p">
+        <button class="ctrl-btn" id="pause-motion" aria-pressed="false" aria-label="Pause motion, keyboard shortcut P" aria-keyshortcuts="p">
           <svg viewBox="0 0 991 1003" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5">
             <g transform="translate(-1394.406168,-780.23294)">
               <g transform="matrix(0.952381,0,0,0.963873,922.384702,-16.521504)">
@@ -131,11 +131,11 @@
             </div>
             <div class="contributions" id="keyboard-shortcuts">
               <h2>Keyboard Shortcuts</h2>
-              <p>Shuffle letters = <span class="keyboard-key">S</span><br>
-              Dark mode	= <span class="keyboard-key">D</span><br>
-              Background colours	= <span class="keyboard-key">B</span><br>
-              Pause	= <span class="keyboard-key">P</span><br>
-              Spin letters = <span class="keyboard-key">C</span> , <span class="keyboard-key">O</span> , <span class="keyboard-key">R</span> , <span class="keyboard-key">I</span> , <span class="keyboard-key">N</span></p>
+              <p>Shuffle letters = <span class="keyboard-key" data-key="s">S</span><br>
+              Dark mode	= <span class="keyboard-key" data-key="d">D</span><br>
+              Background colours	= <span class="keyboard-key" data-key="b">B</span><br>
+              Pause	= <span class="keyboard-key" data-key="p">P</span><br>
+              Spin letters = <span class="keyboard-key" data-key="c">C</span> , <span class="keyboard-key" data-key="o">O</span> , <span class="keyboard-key" data-key="r">R</span> , <span class="keyboard-key" data-key="i">I</span> , <span class="keyboard-key" data-key="n">N</span></p>
               <!-- <ul>
                 <li>Shuffle letters	= <span class="keyboard-key">S</span></li>
                 <li>Dark mode	= <span class="keyboard-key">D</li>
