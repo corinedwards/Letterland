@@ -95,7 +95,7 @@ updateNAStates()
 refreshBtn.addEventListener('click', () => {
   flashActivated(refreshBtn)
   scene.regenerateLetters()
-  announce('Letter shapes shuffled')
+  announce('Letters shuffled')
 })
 
 // Pause motion toggle
@@ -105,6 +105,7 @@ pauseMotionBtn.addEventListener('click', () => {
   pauseMotionBtn.setAttribute('aria-pressed', String(paused))
   localStorage.setItem('isPaused', paused)
   scene.setPaused(paused)
+  announce(paused ? 'Animation off' : 'Animation on')
   updateNAStates()
 })
 
@@ -128,7 +129,7 @@ bgColorBtn.addEventListener('click', (e) => {
   localStorage.setItem('bgColor', color)
   scene.setBackgroundColor(color)
   bgColorLabel.textContent = color.toUpperCase()
-  announce(`Background colour: ${color.toUpperCase()}`)
+  announce('Background colour changed')
 })
 
 function updateNAStates() {
