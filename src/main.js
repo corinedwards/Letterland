@@ -95,6 +95,7 @@ updateNAStates()
 refreshBtn.addEventListener('click', () => {
   flashActivated(refreshBtn)
   scene.regenerateLetters()
+  announce('Letter shapes shuffled')
 })
 
 // Pause motion toggle
@@ -115,6 +116,7 @@ darkModeBtn.addEventListener('click', () => {
   localStorage.setItem('isDarkMode', darkMode)
   scene.setDarkMode(darkMode)
   document.body.classList.toggle('dark-mode', darkMode)
+  announce(darkMode ? 'Dark mode on' : 'Dark mode off')
   updateNAStates()
 })
 
@@ -126,6 +128,7 @@ bgColorBtn.addEventListener('click', (e) => {
   localStorage.setItem('bgColor', color)
   scene.setBackgroundColor(color)
   bgColorLabel.textContent = color.toUpperCase()
+  announce(`Background colour: ${color.toUpperCase()}`)
 })
 
 function updateNAStates() {
@@ -139,6 +142,12 @@ function updateNAStates() {
 function setButtonNA(btn, isNA) {
   btn.classList.toggle('is-na', isNA)
   btn.disabled = isNA
+}
+
+function announce(message) {
+  const el = document.getElementById('announcer')
+  el.textContent = ''
+  requestAnimationFrame(() => { el.textContent = message })
 }
 
 function flashActivated(el) {
