@@ -62,20 +62,15 @@ body p{
   padding-bottom:1em
 }
 
-H1, H2, ul li, p{
+H1, H2, ul li, p, a:link, a:visited{
   color:#fff;
   mix-blend-mode: difference;
 }
 
-a:link{
-  color:lightblue;
-  mix-blend-mode: difference;
+a:link, a:visited{
+  font-weight:bold;
 }
 
-a:visited{
-  color:lightpink;
-  mix-blend-mode: difference;
-}
 
 table{
   display: block;
@@ -122,7 +117,8 @@ ul.cheevos li{
 
 .pill {
   /* border:solid 1px; */
-  background:rgba(255,255,255,0.1);
+  /* background:rgba(255,255,255,0.1); */
+  background:#111;
   border-radius: 8px; 
   display:inline-block;
   text-align: left;
