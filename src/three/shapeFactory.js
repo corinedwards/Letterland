@@ -72,7 +72,7 @@ export class ShapeFactory {
       const { letter, shapeData, mesh } = result.value
 
       if (!this.loadedCustomShapes[letter]) this.loadedCustomShapes[letter] = []
-      this.loadedCustomShapes[letter].push({ name: shapeData.name, key: shapeData.key, mesh })
+      this.loadedCustomShapes[letter].push({ name: shapeData.name, key: shapeData.key, mesh, type: shapeData.type, path: shapeData.path })
 
       // Add to shape creators — clone with deep material cloning
       this.shapes[letter].push(() => {

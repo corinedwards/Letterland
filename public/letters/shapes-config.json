@@ -23,7 +23,7 @@
         "y": 0,
         "z": 0.03
       },
-      "speed": 2.0,
+      "speed": 2,
       "speedVariation": 0.6
     },
     "bgColors": [
@@ -59,9 +59,9 @@
     },
     "demoSpinOverlay": {
       "radius": 1.15,
-      "tickLength": 0.20,
+      "tickLength": 0.2,
       "tickDensity": 62,
-      "needleSpeed": 0.20,
+      "needleSpeed": 0.2,
       "orbitXRotation": -55,
       "orbitYRotation": -46,
       "lineColor": "#ffffff",
@@ -77,7 +77,7 @@
     "darkModeEffects": {
       "rgbShift": {
         "enabled": true,
-        "maxShiftPixels": 3.0,
+        "maxShiftPixels": 3,
         "animationSpeed": 0.016,
         "blurIntensity": 0.2
       },
@@ -86,12 +86,127 @@
         "triggerInterval": 4000,
         "duration": 400,
         "updateFPS": 12,
-        "smearWidth": 0.30,
-        "smearHeight": 0.30,
+        "smearWidth": 0.3,
+        "smearHeight": 0.3,
         "segments": 4.8,
-        "intensityMultiplier": 4.0
+        "intensityMultiplier": 4
       }
-    }
+    },
+    "bgColorNames": [
+      "Blue flowers",
+      "Fiona pinnata",
+      "Salmon dip",
+      "High vis",
+      "Neon Watermelon",
+      "Vectrex monotone",
+      "Custard",
+      "Blå Petter",
+      "Laser slime",
+      "Electric magenta",
+      "Safety yellow",
+      "Dorothy Gordon Grevillea",
+      "Baffle Creek",
+      "Bexley North",
+      "Blackboard",
+      "Hi Tail Hauler",
+      "V'Ger",
+      "Lavender compost",
+      "Aubergine",
+      "Hummus",
+      "Hex yellow"
+    ],
+    "bgColorNotes": [
+      "",
+      "https://en.wikipedia.org/wiki/Fiona_pinnata",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "https://www.ipmsstockholm.se/home/saab-ja-37-viggen-bla-petter/",
+      "",
+      "",
+      "",
+      "https://myallparkbotanicgarden.com/projects/grevillea-dorothy-gordon-release/",
+      "https://en.wikipedia.org/wiki/Mouth_of_Baffle_Creek_Conservation_Park",
+      "https://bexleynth-p.schools.nsw.gov.au",
+      "",
+      "https://www.mercari.com/us/item/m16144823335/",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "bgColorWCAG": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "WCAG AAA",
+      "WCAG AAA",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "bgColorAPCA": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "bgColorChecked": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
   },
   "_defaults": {
     "color": "#000",
@@ -109,27 +224,26 @@
     "rotationY": 0,
     "rotationZ": 0
   },
-  "C-Arcade, O-Arcade, R-Arcade, I-Arcade, N-Arcade" : {
-      "color": "#FFDF00",
-      "emissive": "#FFD639",
-      "emissiveIntensity": 0.4,
-      "extrudeDepth": 24
+  "C-Arcadia, O-Arcadia, R-Arcadia, I-Arcadia, N-Arcadia": {
+    "color": "#FFDF00",
+    "emissive": "#FFD639",
+    "emissiveIntensity": 0.4,
+    "extrudeDepth": 24
   },
   "C-Raverwave, O-Raverwave, R-Raverwave, I-Raverwave, N-Raverwave": {
-    "color": "#862AFE",
+    "color": "#ff6600",
     "emissive": "#2AFE59",
     "emissiveIntensity": 0.8,
     "extrudeDepth": 36,
-    "color": "#ff6600",
     "metalness": 0,
     "roughness": 0.3
   },
-  "C-Ooze, O-Ooze, R-Ooze, I-Ooze, N-Ooze" : {
+  "C-Ooze, O-Ooze, R-Ooze, I-Ooze, N-Ooze": {
     "color": "#ff6251",
     "emissive": "#ff8647",
     "emissiveIntensity": 0.4
   },
-  "C-NewWave, O-NewWave, O-NewWave, R-NewWave, I-NewWave, N-NewWave" : {
+  "C-NewWave, O-NewWave, O-NewWave, R-NewWave, I-NewWave, N-NewWave": {
     "color": "#ffffff",
     "extrudeDepth": 36,
     "metalness": 2.2,
@@ -137,10 +251,9 @@
     "emissive": "#ffffff",
     "emissiveIntensity": 1,
     "edges": true,
-    "edgeColor": "#003882",
     "edgeColor": "#0311a1"
   },
-  "C-ShotTheSerif, O-ShotTheSerif, R-ShotTheSerif, I-ShotTheSerif, N-ShotTheSerif" : {
+  "C-ShotTheSerif, O-ShotTheSerif, R-ShotTheSerif, I-ShotTheSerif, N-ShotTheSerif": {
     "color": "#8f00ff",
     "extrudeDepth": 22,
     "metalness": 3.8,
@@ -149,10 +262,10 @@
     "emissiveIntensity": 0.8,
     "scale": 0.9
   },
-  "C-Cactus" :{
-     "texture": "C-Cactus.png",
-     "roughness": 0.8,
-     "3dapp": "blockbench"
+  "C-Cactus": {
+    "texture": "C-Cactus.png",
+    "roughness": 0.8,
+    "3dapp": "blockbench"
   },
   "O-Moon": {
     "scale": 1
@@ -166,7 +279,7 @@
     "rotationZ": 0,
     "emissiveIntensity": 1.1
   },
-  "N-Giraffe":{
+  "N-Giraffe": {
     "emissiveIntensity": 8.4,
     "emissive": "#ffe100",
     "rotationX": 0,
@@ -176,9 +289,17 @@
     "textureFilter": "nearest",
     "texture": "N-Giraffe.png"
   },
-    "N-GrfGlitch":{
+  "N-GrfGlitch": {
     "3dapp": "blockbench",
     "texture": "N-GiraffeNatural.png",
     "emissiveIntensity": 0.7
+  },
+  "_shapeNotes": {
+    "I-Arcadia": "This palm tree is the letter I as used in the promotional material and packaging for 'California Games' for the Commodore 64 home computer.  The sound design for this game was created by Chris Gregg a member of the experimental band 'Negativeland' who would pioneer the anti-consumerist protest movement of 'Culture jamming' - https://en.wikipedia.org/wiki/California_Games",
+    "R-Arcadia": "This is my speculative take on an R from the SEGA logotype.  Sega's lettering appears to be based on the typeface 'Yagi Double' by Teruoki Yagi.  Sega highly customised their version and in their visual language that original font's R would not fit.  To be honest mine wouldn't precisely fit either, but it has a familiar enough structure that it feels nostalgic for a shape that never existed - https://fontsinuse.com/uses/41825/sega-logo-1976-present",
+    "O-Arcadia": "This spiral, standing g in for the letter O, is a mechanically redrawn version, of the originally hand drawn, symbol for the Sega Dreamcast console.  The Dreamcast would be the final console manufactured by Sega in 1998. There is some dispute over the origins of the symbol. It may have been created by game developer Kenji Eno, who also came up with the name, or it may have been an unknown designer from the agency Interbrand\n\n- https://en.wikipedia.org/wiki/Dreamcast",
+    "C-Arcadia": "This letter C comes from a flyer for the 2 player version of the 1971 video game 'Computer Space'.  Created by Nolan Bushnell and Ted Dabney who would go on to found Atari - https://flyers.arcade-museum.com/videogames/show/1427",
+    "N-Arcadia": "This delightfully simple letter N is emblazoned across the front plate of  Atari's PONG, from 1972.  Set in Blippo, designed by Joe Taylor for FotoStar, which in turn was *possibly* based on Burko by David L. Burke - https://fontsinuse.com/uses/9775/pong-poster",
+    "R-Ooze": "handwritten letter and drip"
   }
 }

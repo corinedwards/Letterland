@@ -56,13 +56,15 @@ async function initApp() {
   })
   
   const bgColors = sceneSettings.bgColors || ['#ffffff']
-  return { scene, bgColors }
+  const bgColorNames = sceneSettings.bgColorNames || []
+  return { scene, bgColors, bgColorNames }
 }
 
 // Start the app
 const app = await initApp()
 const scene = app.scene
 const bgColors = app.bgColors
+const bgColorNames = app.bgColorNames
 
 // Control buttons
 const refreshBtn = document.getElementById('refresh')
@@ -129,7 +131,10 @@ bgColorBtn.addEventListener('click', (e) => {
   localStorage.setItem('bgColor', color)
   scene.setBackgroundColor(color)
   bgColorLabel.textContent = color.toUpperCase()
-  announce('Background colour changed')
+  const colorName = bgColorNames[bgColorIndex]
+  announce(colorName && colorName !== 'Unnamed'
+    ? `Background colour changed to ${colorName}`
+    : 'Background colour changed')
 })
 
 function updateNAStates() {
@@ -145,10 +150,14 @@ function setButtonNA(btn, isNA) {
   btn.disabled = isNA
 }
 
+let announceToggle = false
 function announce(message) {
-  const el = document.getElementById('announcer')
-  el.textContent = ''
-  requestAnimationFrame(() => { el.textContent = message })
+  const a = document.getElementById('announcer-a')
+  const b = document.getElementById('announcer-b')
+  announceToggle = !announceToggle
+  const [active, inactive] = announceToggle ? [a, b] : [b, a]
+  inactive.textContent = ''
+  active.textContent = message
 }
 
 function flashActivated(el) {

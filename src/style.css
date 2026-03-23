@@ -117,8 +117,6 @@ ul.cheevos li{
 
 .pill {
   border:solid 1px;
-  /* background:rgba(255,255,255,0.1); */
-  /* background:#111; */
   border-radius: 8px; 
   display:inline-block;
   text-align: left;
@@ -276,59 +274,59 @@ body.dark-mode .ctrl-btn:focus-visible {
 
 
 
-.parent{
+.panel{
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas:
-    "header header header"
-    "welcome appointments contributions"
-    "welcome appointments contributions";
+    "head head head"
+    "col-a col-b col-c"
+    "col-a col-b col-c";
   gap:2em;
   padding: 1em;
   line-height: 1.8em;
   }
-.parent .child.header{
-    grid-area: header;
+.panel .head{
+    grid-area: head;
   }
-.parent .child.welcome{
-    grid-area: welcome;
-
-
-  }
-.parent .appointments{
-    grid-area: appointments;
+.panel .col-a{
+    grid-area: col-a;
 
 
   }
-.parent .contributions{
-    grid-area: contributions;
+.panel .col-b{
+    grid-area: col-b;
+
+
+  }
+.panel .col-c{
+    grid-area: col-c;
 
   }
 
-  .parent p,ul li{
+  .panel p,ul li{
     font-size: medium;
     font-weight: 100;
   }
-  .parent h1{
+  .panel h1{
     font-size: 1.8em;
     font-weight: 600;
     margin-bottom: 0;
 
 
   }
-  .parent h2{
+  .panel h2{
     font-size:medium;
     font-weight: 700;
     padding-bottom:1em;
   }
 
-  .parent h2+ul, .parent h2+p {
+  .panel h2+ul, .panel h2+p {
     padding-bottom:2em;
   }
 
 
-.parent ul li{
+.panel ul li{
   list-style-position: inside;
 }
 
@@ -361,14 +359,14 @@ body.dark-mode .ctrl-btn:focus-visible {
     font-size: 1rem;
   }
 
-  .parent{
+  .panel{
     display: grid;
     grid-template-columns: 1fr;
     grid-template-areas:
-      "header"
-      "welcome"
-      "appointments"
-      "contributions";
+      "head"
+      "col-a"
+      "col-b"
+      "col-c";
     gap:2em;
     padding: 0em;
     }

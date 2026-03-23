@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Letter Inspector</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      background: #1c1c1e;
+      color: #d4d4d4;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #333;
+      flex-shrink: 0;
+    }
+    header h1 { font-size: 12px; font-weight: normal; color: #666; }
+    header h1 strong { color: #eee; font-weight: normal; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 660px 1fr 260px;
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      border-right: 1px solid #333;
+      overflow-y: auto;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 7px;
+    }
+
+    /* Letter picker */
+    .letter-row {
+      display: flex;
+      gap: 3px;
+    }
+    .letter-btn {
+      flex: 1;
+      padding: 7px 4px;
+      background: #2a2a2d;
+      border: 1px solid #3a3a3d;
+      color: #888;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .letter-btn:hover { background: #333; color: #ccc; }
+    .letter-btn.active { background: #3a3a3d; color: #fff; border-color: #666; }
+
+    /* Shape list */
+    .shape-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .shape-btn {
+      padding: 5px 8px;
+      background: none;
+      border: 1px solid transparent;
+      color: #777;
+      font-family: inherit;
+      font-size: 11px;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .shape-btn:hover { color: #ccc; background: #252528; }
+    .shape-btn.active { color: #fff; background: #2d2d30; border-color: #555; }
+
+    /* Colour list */
+    .color-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 4px;
+    }
+    .color-item {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2px;
+      padding: 8px 10px;
+      border: none;
+      outline: 2px solid transparent;
+      outline-offset: -2px;
+      cursor: pointer;
+      font-family: system-ui, sans-serif;
+      width: 100%;
+      text-align: left;
+      position: relative;
+    }
+    .color-item:hover { outline-color: rgba(255,255,255,0.5); }
+    .color-item.active { outline-color: #fff; }
+    .color-label {
+      color: #ffffff;
+      mix-blend-mode: difference;
+      line-height: 1.2;
+    }
+    .color-label-hex {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .color-label-name {
+      color: rgba(255,255,255,0.7);
+      background: none;
+      border: none;
+      border-bottom: 1px solid transparent;
+      font-family: system-ui, sans-serif;
+      font-size: 12px;
+      padding: 0;
+      width: 100%;
+      cursor: text;
+      outline: none;
+      mix-blend-mode: difference;
+    }
+    .color-label-name:focus { border-bottom-color: rgba(255,255,255,0.4); }
+    .color-label-name::placeholder { color: rgba(255,255,255,0.25); }
+    .color-label-note {
+      color: rgba(255,255,255,0.45);
+      background: none;
+      border: none;
+      border-bottom: 1px solid transparent;
+      font-family: system-ui, sans-serif;
+      font-size: 10px;
+      padding: 0;
+      width: 100%;
+      cursor: text;
+      outline: none;
+      mix-blend-mode: difference;
+    }
+    .color-label-note:focus { border-bottom-color: rgba(255,255,255,0.3); }
+    .color-label-note::placeholder { color: rgba(255,255,255,0.2); }
+    .color-label-wcag,
+    .color-label-apca {
+      color: rgba(255,255,255,0.45);
+      background: none;
+      border: none;
+      border-bottom: 1px solid transparent;
+      font-family: system-ui, sans-serif;
+      font-size: 10px;
+      padding: 0;
+      width: 100%;
+      cursor: text;
+      outline: none;
+      mix-blend-mode: difference;
+    }
+    .color-label-wcag:focus,
+    .color-label-apca:focus { border-bottom-color: rgba(255,255,255,0.3); }
+    .color-label-wcag::placeholder,
+    .color-label-apca::placeholder { color: rgba(255,255,255,0.2); }
+    .color-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2px 0 4px;
+    }
+    .color-check-btn {
+      font-size: 11px;
+      color: #888;
+      cursor: pointer;
+      user-select: none;
+      padding: 0;
+      text-decoration: none;
+    }
+    .color-check-btn.checked { color: #333; font-weight: bold; }
+    .color-check-btn:hover { color: #333; }
+    .color-delete-link {
+      font-size: 11px;
+      color: #888;
+      text-decoration: none;
+    }
+    .color-delete-link:hover { color: #c00; }
+
+    /* Save button */
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid #2a2a2d;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .save-btn {
+      width: 100%;
+      padding: 7px 10px;
+      background: #2a2a2d;
+      border: 1px solid #444;
+      color: #aaa;
+      font-family: inherit;
+      font-size: 11px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .save-btn:hover { background: #333; color: #fff; border-color: #666; }
+    .save-btn.saved { border-color: #4ec9b0; color: #4ec9b0; }
+    .save-status { font-size: 10px; color: #555; min-height: 14px; }
+
+    /* ── Canvas ── */
+    .canvas-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      transition: background 0.25s;
+    }
+
+    .canvas-above {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      row-gap: 2px;
+      font-family: system-ui, sans-serif;
+      mix-blend-mode: difference;
+      pointer-events: none;
+    }
+    .canvas-info-hex  { grid-column: 1; grid-row: 1; color: #fff; font-size: 15px; font-weight: 700; letter-spacing: 0.03em; }
+    .canvas-info-name { grid-column: 1; grid-row: 2; color: rgba(255,255,255,0.8); font-size: 12px; min-height: 1em; }
+    .canvas-info-note { grid-column: 1; grid-row: 3; color: rgba(255,255,255,0.5); font-size: 10px; min-height: 1em; }
+
+    .canvas-below {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      z-index: 2;
+      font-family: system-ui, sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      mix-blend-mode: difference;
+      pointer-events: none;
+    }
+
+    .canvas-box {
+      position: relative;
+      width: 50vmin;
+      height: 50vmin;
+      flex-shrink: 0;
+    }
+    .canvas-box::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 1px solid #fff;
+      mix-blend-mode: difference;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .canvas-box canvas { display: block; position: absolute; }
+
+    .canvas-shape-label {
+      grid-column: 2;
+      grid-row: 2;
+      justify-self: end;
+      white-space: nowrap;
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    /* ── Props panel ── */
+    .props-panel {
+      border-left: 1px solid #333;
+      overflow-y: auto;
+      padding: 14px 12px;
+    }
+
+    .shape-heading {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #2a2a2d;
+    }
+    .shape-heading strong { color: #eee; font-weight: normal; }
+    .shape-heading { margin-bottom: 6px; border-bottom: none; }
+
+    .shape-note-input {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      border-bottom: 1px solid #2a2a2d;
+      color: rgba(255,255,255,0.45);
+      font-family: inherit;
+      font-size: 10px;
+      padding: 3px 0 6px;
+      outline: none;
+      margin-bottom: 2px;
+      resize: vertical;
+      min-height: 3em;
+      line-height: 1.5;
+    }
+    .shape-note-input:focus { border-bottom-color: #444; color: #999; }
+    .shape-note-input::placeholder { color: #444; }
+    .shape-note-status { font-size: 9px; color: #555; min-height: 12px; margin-bottom: 4px; }
+
+    .props-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .props-table tr + tr td { border-top: 1px solid #222; }
+    .props-table td {
+      padding: 3px 0;
+      vertical-align: top;
+    }
+    .prop-key {
+      color: #5a9fd4;
+      padding-right: 10px;
+      white-space: nowrap;
+      width: 1%;
+    }
+    .prop-key.is-custom { color: #dcdcaa; }
+    .prop-val-str  { color: #ce9178; }
+    .prop-val-num  { color: #b5cea8; }
+    .prop-val-bool { color: #569cd6; }
+    .prop-val-def  { color: #555; }
+
+    /* ── Preview controls ── */
+    .preview-controls {
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #2a2a2d;
+    }
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+    .ctrl-label { font-size: 11px; color: #777; }
+    .toggle-btn {
+      padding: 2px 10px;
+      background: #2a2a2d;
+      border: 1px solid #3a3a3d;
+      color: #555;
+      font-family: inherit;
+      font-size: 10px;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    .toggle-btn.is-on { background: #1a3830; border-color: #4ec9b0; color: #4ec9b0; }
+    .speed-slider { width: 100%; margin: 6px 0 2px; accent-color: #5a9fd4; cursor: pointer; }
+
+    /* ── Loading overlay ── */
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: #1c1c1e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">Loading shapes…</div>
+
+  <header>
+    <h1>⬡ <strong>Letter Inspector</strong></h1>
+  </header>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div>
+        <div class="section-label">Letter</div>
+        <div class="letter-row" id="letter-row"></div>
+      </div>
+      <div>
+        <div class="section-label">Shape</div>
+        <div class="shape-list" id="shape-list"></div>
+      </div>
+      <div>
+        <div class="section-label">Background</div>
+        <div class="color-list" id="color-list"></div>
+      </div>
+      <div class="sidebar-footer">
+        <button class="save-btn" id="save-btn">Save names to config</button>
+        <div class="save-status" id="save-status"></div>
+      </div>
+    </div>
+
+    <div class="canvas-wrap" id="canvas-wrap">
+      <div class="canvas-box" id="canvas-box">
+        <div class="canvas-above">
+          <span class="canvas-info-hex" id="canvas-info-hex"></span>
+          <span class="canvas-info-name" id="canvas-info-name"></span>
+          <span class="canvas-info-note" id="canvas-info-note"></span>
+          <div class="canvas-shape-label" id="canvas-shape-label"></div>
+        </div>
+        <div class="canvas-below" id="canvas-shape-desc"></div>
+        <canvas id="canvas"></canvas>
+      </div>
+    </div>
+
+    <div class="props-panel">
+      <div class="preview-controls">
+        <div class="section-label" style="margin-bottom:8px">Preview</div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Floating</span>
+          <button class="toggle-btn is-on" id="float-toggle">On</button>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Rotating</span>
+          <button class="toggle-btn" id="rotate-toggle">Off</button>
+        </div>
+        <div class="ctrl-row">
+          <span class="ctrl-label">Float intensity</span>
+          <span class="ctrl-label" id="float-intensity-val">1.0×</span>
+        </div>
+        <input type="range" class="speed-slider" id="float-intensity" min="0" max="3" step="0.05" value="1">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Rotate speed</span>
+          <span class="ctrl-label" id="rotate-speed-val">1.0×</span>
+        </div>
+        <input type="range" class="speed-slider" id="rotate-speed" min="0.1" max="5" step="0.1" value="1">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Letter size</span>
+          <span class="ctrl-label" id="letter-size-val">1.0×</span>
+        </div>
+        <input type="range" class="speed-slider" id="letter-size" min="0.3" max="3" step="0.05" value="1">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Box size</span>
+          <span class="ctrl-label" id="box-size-val">50</span>
+        </div>
+        <input type="range" class="speed-slider" id="box-size" min="10" max="80" step="1" value="50">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Ambient</span>
+          <span class="ctrl-label" id="light-ambient-val">1.5</span>
+        </div>
+        <input type="range" class="speed-slider" id="light-ambient" min="0" max="5" step="0.1" value="1.5">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Key light</span>
+          <span class="ctrl-label" id="light-key-val">2.5</span>
+        </div>
+        <input type="range" class="speed-slider" id="light-key" min="0" max="8" step="0.1" value="2.5">
+        <div class="ctrl-row">
+          <span class="ctrl-label">Fill light</span>
+          <span class="ctrl-label" id="light-fill-val">0.6</span>
+        </div>
+        <input type="range" class="speed-slider" id="light-fill" min="0" max="4" step="0.1" value="0.6">
+      </div>
+      <div class="shape-heading" id="shape-heading">—</div>
+      <textarea class="shape-note-input" id="shape-note" placeholder="note or url…" rows="3"></textarea>
+      <div class="shape-note-status" id="shape-note-status"></div>
+      <div class="section-label" style="margin-bottom:8px;margin-top:14px">Config</div>
+      <table class="props-table" id="props-table"></table>
+    </div>
+  </div>
+
+  <script type="module" src="/src/letter-inspector.js"></script>
+</body>
+</html>

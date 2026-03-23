@@ -805,33 +805,39 @@ export class ThreeScene {
     if (this.paused || this.userHasInteracted) return
     const { delay, scratchVelocity, scratchDuration, scratchGap, spinVelocity } = this.settings.demoSpin
 
+    // Always fetch the live R letter so shuffles mid-sequence don't break things
+    const getR = () => this.letterManager.letterObjects.find(obj => obj.name === 'R')
+
     // Animate a single scratch with sine easing (0 → peak → 0 over scratchDuration ms)
-    const animateScratch = (direction, rLetter) => {
+    const animateScratch = (direction) => {
       const peak = scratchVelocity * direction
       const startTime = performance.now()
       const frame = (now) => {
         if (this.userHasInteracted) return
+        const r = getR(); if (!r) return
         const t = Math.min((now - startTime) / scratchDuration, 1)
-        rLetter.hoverVelocity = peak * Math.sin(t * Math.PI)
-        rLetter.shouldReturnToOrigin = false
-        if (t < 1) requestAnimationFrame(frame)
+        if (t < 1) {
+          r.hoverVelocity = peak * Math.sin(t * Math.PI)
+          r.shouldReturnToOrigin = false
+          requestAnimationFrame(frame)
+        }
       }
       requestAnimationFrame(frame)
     }
 
     const start = () => {
       if (this.userHasInteracted) return
-      const rLetter = this.letterManager.letterObjects.find(obj => obj.name === 'R')
+      const rLetter = getR()
       if (!rLetter) return
 
       this.createDemoOrb(rLetter)
 
-      animateScratch(-1, rLetter)
-      this.demoTimeouts.push(setTimeout(() => animateScratch(+1, rLetter), scratchGap))
-      this.demoTimeouts.push(setTimeout(() => animateScratch(-1, rLetter), scratchGap * 2))
+      animateScratch(-1)
+      this.demoTimeouts.push(setTimeout(() => animateScratch(+1), scratchGap))
+      this.demoTimeouts.push(setTimeout(() => animateScratch(-1), scratchGap * 2))
       this.demoTimeouts.push(setTimeout(() => {
         if (this.userHasInteracted) return
-        rLetter.hoverVelocity = spinVelocity // big fast spin — returnToRest kicks in naturally after
+        const r = getR(); if (r) r.hoverVelocity = spinVelocity // big fast spin
       }, scratchGap * 3))
       // Fade the orb out after the spin has had time to decay
       this.demoTimeouts.push(setTimeout(() => this.hideDemoOrb(), scratchGap * 3 + this.demoNeedleFadeOutOffset))
@@ -1076,8 +1082,10 @@ export class ThreeScene {
 
   updateDemoOrb() {
     const orb = this.demoSpinOverlay
-    const rLetter = orb.rLetter
+    // Always resolve R from the live letter list so shuffles don't break the overlay
+    const rLetter = this.letterManager?.letterObjects.find(obj => obj.name === 'R') ?? orb.rLetter
     if (!rLetter?.mesh) return
+    orb.rLetter = rLetter
 
     // Orbit tilted 96° around X axis — sweeps mostly left/right with depth variation,
     // like a finger tracing horizontally across the face of the letter
